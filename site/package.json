@@ -23,6 +23,8 @@
     "fs": "0.0.2",
     "github": "0.2.4",
     "gm": "1.21.1",
+    "google-auth-library": "^0.9.8",
+    "googleapis": "^13.0.0",
     "gsap": "1.18.2",
     "hashish": "0.0.4",
     "http-server": "0.8.5",

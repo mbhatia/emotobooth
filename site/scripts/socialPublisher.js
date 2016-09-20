@@ -4,10 +4,82 @@ var Twitter = require('twitter');
 var GitHubApi = require("github");
 var fs = require('fs');
 var cp = require('child_process');
+var readline = require('readline');
+var google = require('googleapis');
+var googleAuth = require('google-auth-library');
 
 module.exports = {
   SocialPublisher: function(credentials, callback) {
     this.callback = callback;
+    this.credentials = credentials;
+
+    this.SCOPES = ['https://www.googleapis.com/auth/drive'];
+    this.TOKEN_DIR = __dirname + '/.credentials/';
+    this.TOKEN_PATH = this.TOKEN_DIR + 'drive-nodejs-quickstart.json';
+    this.auth;
+
+    this.authorize = function(credentials, callback) {
+      var clientSecret = credentials.installed.client_secret;
+      var clientId = credentials.installed.client_id;
+      var redirectUrl = credentials.installed.redirect_uris[0];
+      var auth = new googleAuth();
+      var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+
+      // Check if we have previously stored a token.
+      fs.readFile(this.TOKEN_PATH, (function(err, token) {
+        if (err) {
+          this.getNewToken(oauth2Client, callback);
+        } else {
+          oauth2Client.credentials = JSON.parse(token);
+          callback(oauth2Client);
+        }
+      }).bind(this));
+    }
+
+    this.getNewToken = function(oauth2Client, callback) {
+      var authUrl = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: this.SCOPES
+      });
+      console.log('Authorize this app by visiting this url: ', authUrl);
+      var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
+      rl.question('Enter the code from that page here: ', (function(code) {
+        rl.close();
+        oauth2Client.getToken(code, (function(err, token) {
+          if (err) {
+            console.log('Error while trying to retrieve access token', err);
+            return;
+          }
+          oauth2Client.credentials = token;
+          this.storeToken(token);
+          callback(oauth2Client);
+        }).bind(this));
+      }).bind(this));
+    }
+
+    this.storeToken = function(token) {
+      try {
+        fs.mkdirSync(this.TOKEN_DIR);
+      } catch (err) {
+        if (err.code != 'EEXIST') {
+          throw err;
+        }
+      }
+      fs.writeFile(this.TOKEN_PATH, JSON.stringify(token));
+      console.log('Token stored to ' + this.TOKEN_PATH);
+    }
+    
+    fs.readFile('client_secret.json', (function(err, content) {
+      if (err) {
+        console.log('Error loading client secret file: ' + err);
+        return;
+      }
+      this.authorize(JSON.parse(content), (this.saveAuth).bind(this));
+    }).bind(this));
+
     this.github = new GitHubApi({
       // required
       version: "3.0.0",
@@ -22,9 +94,9 @@ module.exports = {
       }
     });
 
-    this.github.authenticate(credentials.GITHUB);
+    this.github.authenticate(this.credentials.GITHUB);
 
-    this.twitter = new Twitter(credentials.TWITTER);
+    this.twitter = new Twitter(this.credentials.TWITTER);
 
     this.uploadPhotos = function(id, sessionData) {
       let cmd = 'eval "$(ssh-agent -s)"; ssh-add ~/.ssh/gcpemotobooth; /usr/bin/git clone git@gist.github.com:' + id + "; cd " + id + ";";
@@ -35,7 +107,7 @@ module.exports = {
         }
       }
       cmd += " /usr/bin/git add .; /usr/bin/git commit -m 'n/a'; /usr/bin/git push; cd ..; rm -rf " + id + ";";
-      console.log(cmd);
+      
       cp.exec(cmd,
         function (error, stdout, stderr) {
           console.log(stdout, stderr);
@@ -43,6 +115,38 @@ module.exports = {
             console.log('exec error: ' + error);
           }
         });
+
+      var service = google.drive('v3');
+      i = 0;
+      let now = (new Date()).getTime();
+      for (let key in sessionData) {
+        if (sessionData[key].finalPath) {
+
+          service.files.create({
+            auth: this.auth,
+            uploadType: "multipart",
+            resource: {
+              name: now + '-' + i + '.png',
+              mimeType: 'image/png',
+              parents: [this.credentials.DRIVE.folderId]
+            },
+            media: {
+              mimeType: 'image/png',
+              body: fs.createReadStream(sessionData[key].finalPathChrome)
+            }
+          }, function(err, response) {
+            if (err) {
+              console.log('The API returned an error: ' + err);
+              return;
+            }
+            console.log(response);
+          });
+        }
+      }
+    }
+
+    this.saveAuth = function(auth) {
+      this.auth = auth;
     }
 
     this.uploadTweet = function(gistUrl, sessionData) {

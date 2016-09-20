@@ -714,7 +714,7 @@ chokidar.watch(config.inDir, {
   ignored: /CaptureOne/
 })
 .on('ready', function() {
-  logger.info(sprintf('watching %s for new files', config.inDir));
+  //logger.info(sprintf('watching %s for new files', config.inDir));
 })
 .on('add', (imagePath) => {
   setTimeout(() => {

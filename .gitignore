@@ -17,3 +17,5 @@ CaptureOne/
 npm-debug.log
 credentials.json
 config.js
+site/scripts/.credentials
+site/client_secret.json
