@@ -50,7 +50,7 @@
 	
 	__webpack_require__(2);
 	
-	__webpack_require__(61);
+	__webpack_require__(62);
 
 
 /***/ },
@@ -142,6 +142,8 @@
 	window.states = null;
 	var newImage = null;
 	var eventName = null;
+	
+	var prepopulateArray = [];
 	
 	var refreshTimer = null;
 	// faster timing for when images have not been processed for a while
@@ -303,19 +305,19 @@
 	
 	function loadStatesAndTimes() {
 	  if (timingsType === 'fast') {
-	    window.states = __webpack_require__(40)("./" + eventName + '/_timings-fast.js');
+	    window.states = __webpack_require__(41)("./" + eventName + '/_timings-fast.js');
 	  } else if (timingsType === 'finalOnly') {
-	    window.states = __webpack_require__(43)("./" + eventName + '/_timings-finalOnly.js');
+	    window.states = __webpack_require__(44)("./" + eventName + '/_timings-finalOnly.js');
 	  } else if (timingsType === 'noFace') {
-	    window.states = __webpack_require__(46)("./" + eventName + '/_timings-noFace.js');
+	    window.states = __webpack_require__(47)("./" + eventName + '/_timings-noFace.js');
 	  } else if (timingsType === 'noAura') {
-	    window.states = __webpack_require__(49)("./" + eventName + '/_timings-noAura.js');
+	    window.states = __webpack_require__(50)("./" + eventName + '/_timings-noAura.js');
 	  } else if (timingsType === 'noChrome') {
-	    window.states = __webpack_require__(52)("./" + eventName + '/_timings-noChrome.js');
+	    window.states = __webpack_require__(53)("./" + eventName + '/_timings-noChrome.js');
 	  } else if (timingsType === 'finalOnlyNoChrome') {
-	    window.states = __webpack_require__(55)("./" + eventName + '/_timings-finalOnlyNoChrome.js');
+	    window.states = __webpack_require__(56)("./" + eventName + '/_timings-finalOnlyNoChrome.js');
 	  } else {
-	    window.states = __webpack_require__(58)("./" + eventName + '/_timings.js');
+	    window.states = __webpack_require__(59)("./" + eventName + '/_timings.js');
 	  }
 	}
 	
@@ -339,10 +341,57 @@
 	
 	  prepopulate = window.location.href.includes('prepopulate');
 	
+	  if (prepopulate) {
+	    socket.emit('getPrepopulate', {});
+	  }
+	
 	  loadStatesAndTimes();
 	}
 	
+	function initPrepopulate() {
+	  var xhr = new XMLHttpRequest();
+	  xhr.onreadystatechange = function () {
+	    if (xhr.readyState === XMLHttpRequest.DONE) {
+	      if (xhr.responseText !== ('null' || null)) {
+	        JSON.parse(xhr.responseText).forEach(function (sessionString) {
+	          var session = JSON.parse(sessionString);
+	          var image = session[session.highestScoredKey];
+	          if (!image.deleted) {
+	            var newThreeup = new _threeup2.default(image.chromelessPath);
+	            threeups.push(newThreeup);
+	            newThreeup.manifest();
+	            threeupsHistory.push(image);
+	          }
+	        });
+	      }
+	
+	      var checkForDS = prepopulateArray.indexOf('.DS_Store');
+	      if (checkForDS > -1) {
+	        prepopulateArray.splice(checkForDS, 1);
+	      }
+	
+	      for (var i = 0; i < prepopulateArray.length; i++) {
+	        var prepopPhoto = 'prepopulate/' + prepopulateArray[i];
+	        window.console.log(prepopPhoto);
+	        var newThreeup = new _threeup2.default(prepopPhoto);
+	        threeups.push(newThreeup);
+	        newThreeup.manifest();
+	        threeupsHistory.push({
+	          chromelessPath: prepopPhoto,
+	          origPath: prepopPhoto
+	        });
+	      }
+	    }
+	  };
+	  xhr.open('GET', '/history-data', true);
+	  xhr.send();
+	}
+	
 	window.onload = function () {
+	  socket.on('returnPrepopulate', function (data) {
+	    prepopulateArray = data;
+	  });
+	
 	  setValuesBasedOnQueryStrings();
 	
 	  if (showGrid) {
@@ -364,37 +413,7 @@
 	  }
 	
 	  if (prepopulate) {
-	    (function () {
-	      var xhr = new XMLHttpRequest();
-	      xhr.onreadystatechange = function () {
-	        if (xhr.readyState === XMLHttpRequest.DONE) {
-	          if (xhr.responseText !== ('null' || null)) {
-	            JSON.parse(xhr.responseText).forEach(function (sessionString) {
-	              var session = JSON.parse(sessionString);
-	              var image = session[session.highestScoredKey];
-	              if (!image.deleted) {
-	                var newThreeup = new _threeup2.default(image.chromelessPath);
-	                threeups.push(newThreeup);
-	                newThreeup.manifest();
-	                threeupsHistory.push(image);
-	              }
-	            });
-	          }
-	
-	          for (var i = threeupsHistory.length || 1; i < 10; i++) {
-	            var newThreeup = new _threeup2.default('out-debug/prepopulate' + i + '.jpg');
-	            threeups.push(newThreeup);
-	            newThreeup.manifest();
-	            threeupsHistory.push({
-	              chromelessPath: 'out-debug/prepopulate' + i + '.jpg',
-	              origPath: 'out-debug/prepopulate' + i + '.jpg'
-	            });
-	          }
-	        }
-	      };
-	      xhr.open('GET', '/history-data', true);
-	      xhr.send();
-	    })();
+	    setTimeout(initPrepopulate, 1000);
 	  }
 	
 	  if (zoom) {
@@ -7339,7 +7358,7 @@
 	
 	      this.canvasUtils.redrawBaseImage();
 	
-	      this.canvasUtils.createShapeBackground(progress * 0.75);
+	      this.canvasUtils.createShapeBackground(progress);
 	
 	      if (!this.circleStarted && progress !== 1) {
 	        this.circleStarted = true;
@@ -9032,12 +9051,13 @@
 	exports.default = Controls;
 
 /***/ },
-/* 40 */
+/* 40 */,
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-fast.js": 41,
-		"./next/_timings-fast.js": 42
+		"./horizon/_timings-fast.js": 42,
+		"./next/_timings-fast.js": 43
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9050,101 +9070,8 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 40;
+	webpackContext.id = 41;
 
-
-/***/ },
-/* 41 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
-	  NAME: 'flash',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'analyze',
-	  DURATION: 1
-	}];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'complete',
-	  DURATION: 0.2
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'forehead',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'eyes',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'ears',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'nose',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'mouth',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'chin',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 0.2
-	}];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'allFeatures',
-	  DURATION: 0.3
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 0.2
-	}];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 4
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 2
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 4
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 2
-	}];
 
 /***/ },
 /* 42 */
@@ -9219,6 +9146,99 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 4
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 2
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 4
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 2
+	}];
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
+	  NAME: 'flash',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'analyze',
+	  DURATION: 1
+	}];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'complete',
+	  DURATION: 0.2
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'forehead',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'eyes',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'ears',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'nose',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'mouth',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'chin',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 0.2
+	}];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'allFeatures',
+	  DURATION: 0.3
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 0.2
+	}];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
 	  DURATION: 1
 	}, {
 	  NAME: 'animateInVignette',
@@ -9243,12 +9263,12 @@
 	}];
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-finalOnly.js": 44,
-		"./next/_timings-finalOnly.js": 45
+		"./horizon/_timings-finalOnly.js": 45,
+		"./next/_timings-finalOnly.js": 46
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9261,53 +9281,8 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 43;
+	webpackContext.id = 44;
 
-
-/***/ },
-/* 44 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 0
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 0
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 0
-	}];
 
 /***/ },
 /* 45 */
@@ -9336,6 +9311,51 @@
 	  NAME: 'animateInBackground',
 	  DURATION: 0
 	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 0
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 0
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 0
+	}];
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
 	  NAME: 'animateInVignette',
 	  DURATION: 0
 	}, {
@@ -9358,12 +9378,12 @@
 	}];
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-noFace.js": 47,
-		"./next/_timings-noFace.js": 48
+		"./horizon/_timings-noFace.js": 48,
+		"./next/_timings-noFace.js": 49
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9376,11 +9396,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 46;
+	webpackContext.id = 47;
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9425,7 +9445,7 @@
 	}];
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9473,12 +9493,12 @@
 	}];
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-noAura.js": 50,
-		"./next/_timings-noAura.js": 51
+		"./horizon/_timings-noAura.js": 51,
+		"./next/_timings-noAura.js": 52
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9491,83 +9511,8 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 49;
+	webpackContext.id = 50;
 
-
-/***/ },
-/* 50 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
-	  NAME: 'flash',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'analyze',
-	  DURATION: 1
-	}];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'complete',
-	  DURATION: 0.2
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 2
-	}, {
-	  NAME: 'forehead',
-	  DURATION: 2
-	}, {
-	  NAME: 'eyes',
-	  DURATION: 2
-	}, {
-	  NAME: 'ears',
-	  DURATION: 2
-	}, {
-	  NAME: 'nose',
-	  DURATION: 2
-	}, {
-	  NAME: 'mouth',
-	  DURATION: 2
-	}, {
-	  NAME: 'chin',
-	  DURATION: 2
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 2
-	}];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 2
-	}, {
-	  NAME: 'allFeatures',
-	  DURATION: 5
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 2
-	}];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [];
 
 /***/ },
 /* 51 */
@@ -9646,28 +9591,6 @@
 
 /***/ },
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings-noChrome.js": 53,
-		"./next/_timings-noChrome.js": 54
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 52;
-
-
-/***/ },
-/* 53 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9737,21 +9660,31 @@
 	  DURATION: 2
 	}];
 	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 4
-	}];
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [];
 	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 4
-	}];
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [];
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings-noChrome.js": 54,
+		"./next/_timings-noChrome.js": 55
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 53;
+
 
 /***/ },
 /* 54 */
@@ -9826,147 +9759,22 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 1
-	}, {
-	  NAME: 'animateInVignette',
 	  DURATION: 2
 	}, {
 	  NAME: 'animateInHalo',
-	  DURATION: 3
+	  DURATION: 4
 	}];
 	
 	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInMultiAura',
-	  DURATION: 1
+	  NAME: 'animateInBackground',
+	  DURATION: 2
 	}, {
-	  NAME: 'pause',
-	  DURATION: 0.5
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 4
 	}];
 
 /***/ },
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings-finalOnlyNoChrome.js": 56,
-		"./next/_timings-finalOnlyNoChrome.js": 57
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 55;
-
-
-/***/ },
-/* 56 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 0
-	}];
-
-/***/ },
-/* 57 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInVignette',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInMultiAura',
-	  DURATION: 0
-	}];
-
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings.js": 59,
-		"./next/_timings.js": 60
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 58;
-
-
-/***/ },
-/* 59 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10038,25 +9846,144 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
+	  DURATION: 1
+	}, {
+	  NAME: 'animateInVignette',
 	  DURATION: 2
 	}, {
 	  NAME: 'animateInHalo',
-	  DURATION: 2
-	}, {
-	  NAME: 'chrome',
+	  DURATION: 3
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInMultiAura',
 	  DURATION: 1
+	}, {
+	  NAME: 'pause',
+	  DURATION: 0.5
+	}];
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings-finalOnlyNoChrome.js": 57,
+		"./next/_timings-finalOnlyNoChrome.js": 58
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 56;
+
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
 	}];
 	
 	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 2
+	  DURATION: 0
 	}, {
 	  NAME: 'animateInHaloMulti',
-	  DURATION: 2
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 1
+	  DURATION: 0
 	}];
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInVignette',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInMultiAura',
+	  DURATION: 0
+	}];
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings.js": 60,
+		"./next/_timings.js": 61
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 59;
+
 
 /***/ },
 /* 60 */
@@ -10131,6 +10058,99 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 2
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 1
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 2
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 1
+	}];
+
+/***/ },
+/* 61 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
+	  NAME: 'flash',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'analyze',
+	  DURATION: 1
+	}];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'complete',
+	  DURATION: 0.2
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 2
+	}, {
+	  NAME: 'forehead',
+	  DURATION: 2
+	}, {
+	  NAME: 'eyes',
+	  DURATION: 2
+	}, {
+	  NAME: 'ears',
+	  DURATION: 2
+	}, {
+	  NAME: 'nose',
+	  DURATION: 2
+	}, {
+	  NAME: 'mouth',
+	  DURATION: 2
+	}, {
+	  NAME: 'chin',
+	  DURATION: 2
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 2
+	}];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 2
+	}, {
+	  NAME: 'allFeatures',
+	  DURATION: 5
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 2
+	}];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
 	  DURATION: 1
 	}, {
 	  NAME: 'animateInVignette',
@@ -10155,16 +10175,16 @@
 	}];
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(62);
+	var content = __webpack_require__(63);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(64)(content, {});
+	var update = __webpack_require__(65)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10181,10 +10201,10 @@
 	}
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(63)();
+	exports = module.exports = __webpack_require__(64)();
 	// imports
 	
 	
@@ -10195,7 +10215,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports) {
 
 	/*
@@ -10251,7 +10271,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

@@ -24,6 +24,8 @@ window.states = null;
 let newImage = null;
 let eventName = null;
 
+let prepopulateArray = [];
+
 let refreshTimer = null;
 // faster timing for when images have not been processed for a while
 const refreshInitTiming = 20000;
@@ -212,12 +214,59 @@ function setValuesBasedOnQueryStrings() {
 
   prepopulate = window.location.href.includes('prepopulate');
 
+  if (prepopulate) {
+    socket.emit('getPrepopulate', {});
+  }
+
   loadStatesAndTimes();
 }
 
+function initPrepopulate () {
+  const xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.responseText !== ('null' || null)) {
+        JSON.parse(xhr.responseText).forEach((sessionString) => {
+          const session = JSON.parse(sessionString);
+          const image = session[session.highestScoredKey];
+          if (!image.deleted) {
+            const newThreeup = new Threeup(image.chromelessPath);
+            threeups.push(newThreeup);
+            newThreeup.manifest();
+            threeupsHistory.push(image);
+          }
+        });
+      }
+
+      const checkForDS = prepopulateArray.indexOf('.DS_Store');
+      if (checkForDS > -1) {
+        prepopulateArray.splice(checkForDS, 1);
+      }
+
+      for (let i = 0; i < prepopulateArray.length; i++) {
+        const prepopPhoto = `prepopulate/${ prepopulateArray[i] }`;
+        window.console.log(prepopPhoto);
+        const newThreeup = new Threeup(prepopPhoto);
+        threeups.push(newThreeup);
+        newThreeup.manifest();
+        threeupsHistory.push({
+          chromelessPath: prepopPhoto,
+          origPath: prepopPhoto
+        });
+      }
+
+    }
+  };
+  xhr.open('GET', '/history-data', true);
+  xhr.send();
+}
 
 
 window.onload = () => {
+  socket.on('returnPrepopulate', (data) =>{
+    prepopulateArray = data;
+  });
+
   setValuesBasedOnQueryStrings();
 
   if (showGrid) {
@@ -239,36 +288,7 @@ window.onload = () => {
   }
 
   if (prepopulate) {
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.responseText !== ('null' || null)) {
-          JSON.parse(xhr.responseText).forEach((sessionString) => {
-            const session = JSON.parse(sessionString);
-            const image = session[session.highestScoredKey];
-            if (!image.deleted) {
-              const newThreeup = new Threeup(image.chromelessPath);
-              threeups.push(newThreeup);
-              newThreeup.manifest();
-              threeupsHistory.push(image);
-            }
-          });
-        }
-
-        for (let i = threeupsHistory.length || 1; i < 10; i++) {
-          const newThreeup = new Threeup(`out-debug/prepopulate${ i }.jpg`);
-          threeups.push(newThreeup);
-          newThreeup.manifest();
-          threeupsHistory.push({
-            chromelessPath: `out-debug/prepopulate${ i }.jpg`,
-            origPath: `out-debug/prepopulate${ i }.jpg`
-          });
-        }
-
-      }
-    };
-    xhr.open('GET', '/history-data', true);
-    xhr.send();
+    setTimeout(initPrepopulate, 1000);
   }
 
   if (zoom) {
