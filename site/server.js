@@ -34,6 +34,8 @@ var phantomBinPath = phantomjs.path;
 var dontPrint = false;
 let socialPublisher;
 
+let prepopulateArray = [];
+
 logger.level = 'debug';
 
 // Parse args, read config, and configure
@@ -64,6 +66,11 @@ checkDirs.forEach((dir) => {
   if (!fs.existsSync(dir)){
     fs.mkdirSync(dir);
   }
+});
+
+// Get array of prepopulated images
+fs.readdir('prepopulate', function (err, files) {
+  prepopulateArray = files;
 });
 
 // Remove all files currently contained within the `in` directory
@@ -844,6 +851,14 @@ router.route('/images/:image_id')
 
 app.use('/api', router);
 
+function sendBackPrepopulated() {
+  if (prepopulateArray.length > 0) {
+    io.emit('returnPrepopulate', prepopulateArray);
+  } else {
+    setTimeout(sendBackPrepopulated, 1500);
+  }
+}
+
 // Socket.io
 io.on('connection', function(socket) {
   socket.on('new_image', (data) => {
@@ -859,6 +874,11 @@ io.on('connection', function(socket) {
     callNextJobs('sessionEnd', {
       id: uuid.v4()
     });
+  });
+
+  // App asks for prepopulate images
+  socket.on('getPrepopulate', () =>{
+    sendBackPrepopulated();
   });
 
   // If told not to print from the URL
