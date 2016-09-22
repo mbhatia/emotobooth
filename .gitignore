@@ -8,6 +8,7 @@ site/in
 site/in-test
 site/out-photostrips
 site/out-print
+site/out-printed
 site/out
 deploy/.vagrant
 src/node_modules

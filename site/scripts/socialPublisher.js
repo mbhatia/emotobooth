@@ -15,7 +15,7 @@ module.exports = {
 
     this.SCOPES = ['https://www.googleapis.com/auth/drive'];
     this.TOKEN_DIR = __dirname + '/.credentials/';
-    this.TOKEN_PATH = this.TOKEN_DIR + 'drive-nodejs-quickstart.json';
+    this.TOKEN_PATH = this.TOKEN_DIR + 'drive-credentials.json';
     this.auth;
 
     this.authorize = function(credentials, callback) {
