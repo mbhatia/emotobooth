@@ -18,7 +18,7 @@
         var data = JSON.parse(data);
         for (var i = 0; i < data.length; i++) {
           // don't set to zero or it will simply refresh historical
-          newImage(JSON.stringify(data[i]), (1000 + (i * 5000)), i);
+          newImage(JSON.stringify(data[i]), (8000 + (i * 5000)), i);
         }
       });
     </script>
