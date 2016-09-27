@@ -8327,7 +8327,6 @@
 	      if (duration === 0) {
 	        this.imageElement.ifNotDrawing(function () {
 	          _this.animateInMultiAuraFrame(1, _this.canvas.width, _this.getMultiAuraFill(), comp);
-	          _this.drawStuff();
 	        });
 	      } else {
 	        (function () {
@@ -8356,23 +8355,12 @@
 	              _this.animateInMultiAuraFrame(progress, r, _this.imageElement.fills[0], comp);
 	            },
 	            onComplete: function onComplete() {
-	              _this.drawStuff();
-	
 	              _this.imageElement.canvasSnapshot = _this.context.createPattern(_this.canvas, 'no-repeat');
 	              _this.imageElement.killTween(active);
 	            }
 	          });
 	        })();
 	      }
-	    }
-	  }, {
-	    key: 'drawStuff',
-	    value: function drawStuff() {
-	      // this.context.fillStyle = 'red';
-	      // this.context.lineStyle = 'green';
-	      // this.context.rect(0, 0, this.canvas.width/2, this.canvas.height/2);
-	      // this.context.fill();
-	      // this.context.stroke();
 	    }
 	  }, {
 	    key: 'getMultiAuraFill',
