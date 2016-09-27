@@ -18,7 +18,6 @@ export default class MultiAuraStep {
     this.context = context;
     this.pointUtils = new pointUtils(imageElement);
     this.canvasUtils = new canvasUtils(imageElement, canvas, context);
-
     this.animateInMultiAura(duration);
   }
 
@@ -161,9 +160,9 @@ export default class MultiAuraStep {
   }
 
   getMultiAuraFill() {
-    const tempCanvas = this.canvasUtils.createHiDPICanvas(this.imageElement.canvasWidth, this.imageElement.canvasHeight);
-    tempCanvas.width = this.imageElement.canvasWidth;
-    tempCanvas.height = this.imageElement.canvasHeight;
+    const tempCanvas = this.canvasUtils.createHiDPICanvas(this.canvas.width, this.canvas.height);
+    tempCanvas.width = this.canvas.width;
+    tempCanvas.height = this.canvas.height;
     const tempContext = tempCanvas.getContext('2d');
     animationUtils.setSmoothing(tempContext);
 

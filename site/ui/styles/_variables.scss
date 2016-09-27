@@ -5,8 +5,11 @@ $third-width: 1280px;
 $third-height: 2160px;
 $threeup-height: $third-height / 3;
 
-$bezel: 0px;
-$grid-bezel: 0px;
+$single-width: 2048px;
+$single-height: 1280px;
+
+$bezel: 0;
+$grid-bezel: 0;
 
 $image-height: 760px;
 $json-height: $third-height - $image-height;
