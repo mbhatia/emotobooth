@@ -18,7 +18,6 @@ export default class MultiAuraStep {
     this.context = context;
     this.pointUtils = new pointUtils(imageElement);
     this.canvasUtils = new canvasUtils(imageElement, canvas, context);
-
     this.animateInMultiAura(duration);
   }
 
@@ -126,6 +125,7 @@ export default class MultiAuraStep {
     if (duration === 0) {
       this.imageElement.ifNotDrawing(() => {
         this.animateInMultiAuraFrame(1, this.canvas.width, this.getMultiAuraFill(), comp); 
+        this.drawStuff();
       });
     } else {
       let active = null;
@@ -153,6 +153,8 @@ export default class MultiAuraStep {
           this.animateInMultiAuraFrame(progress, r, this.imageElement.fills[0], comp);
         },
         onComplete: () => {
+          this.drawStuff();
+
           this.imageElement.canvasSnapshot = this.context.createPattern(this.canvas, 'no-repeat');
           this.imageElement.killTween(active);
         }
@@ -160,10 +162,18 @@ export default class MultiAuraStep {
     }
   }
 
+  drawStuff() {
+    // this.context.fillStyle = 'red';
+    // this.context.lineStyle = 'green';
+    // this.context.rect(0, 0, this.canvas.width/2, this.canvas.height/2);
+    // this.context.fill();
+    // this.context.stroke();
+  }
+
   getMultiAuraFill() {
-    const tempCanvas = this.canvasUtils.createHiDPICanvas(this.imageElement.canvasWidth, this.imageElement.canvasHeight);
-    tempCanvas.width = this.imageElement.canvasWidth;
-    tempCanvas.height = this.imageElement.canvasHeight;
+    const tempCanvas = this.canvasUtils.createHiDPICanvas(this.canvas.width, this.canvas.height);
+    tempCanvas.width = this.canvas.width;
+    tempCanvas.height = this.canvas.height;
     const tempContext = tempCanvas.getContext('2d');
     animationUtils.setSmoothing(tempContext);
 
