@@ -132,6 +132,25 @@ module.exports = {
             },
             media: {
               mimeType: 'image/png',
+              body: fs.createReadStream(sessionData[key].finalPath)
+            }
+          }, function(err, response) {
+            if (err) {
+              console.log('The API returned an error: ' + err);
+              return;
+            }
+          });
+
+          service.files.create({
+            auth: this.auth,
+            uploadType: "multipart",
+            resource: {
+              name: now + '-' + i + '-chrome.png',
+              mimeType: 'image/png',
+              parents: [this.credentials.DRIVE.folderId]
+            },
+            media: {
+              mimeType: 'image/png',
               body: fs.createReadStream(sessionData[key].finalPathChrome)
             }
           }, function(err, response) {
@@ -139,7 +158,6 @@ module.exports = {
               console.log('The API returned an error: ' + err);
               return;
             }
-            console.log(response);
           });
         }
       }
