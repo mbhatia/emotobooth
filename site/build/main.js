@@ -50,7 +50,7 @@
 	
 	__webpack_require__(2);
 	
-	__webpack_require__(62);
+	__webpack_require__(61);
 
 
 /***/ },
@@ -305,19 +305,19 @@
 	
 	function loadStatesAndTimes() {
 	  if (timingsType === 'fast') {
-	    window.states = __webpack_require__(41)("./" + eventName + '/_timings-fast.js');
+	    window.states = __webpack_require__(40)("./" + eventName + '/_timings-fast.js');
 	  } else if (timingsType === 'finalOnly') {
-	    window.states = __webpack_require__(44)("./" + eventName + '/_timings-finalOnly.js');
+	    window.states = __webpack_require__(43)("./" + eventName + '/_timings-finalOnly.js');
 	  } else if (timingsType === 'noFace') {
-	    window.states = __webpack_require__(47)("./" + eventName + '/_timings-noFace.js');
+	    window.states = __webpack_require__(46)("./" + eventName + '/_timings-noFace.js');
 	  } else if (timingsType === 'noAura') {
-	    window.states = __webpack_require__(50)("./" + eventName + '/_timings-noAura.js');
+	    window.states = __webpack_require__(49)("./" + eventName + '/_timings-noAura.js');
 	  } else if (timingsType === 'noChrome') {
-	    window.states = __webpack_require__(53)("./" + eventName + '/_timings-noChrome.js');
+	    window.states = __webpack_require__(52)("./" + eventName + '/_timings-noChrome.js');
 	  } else if (timingsType === 'finalOnlyNoChrome') {
-	    window.states = __webpack_require__(56)("./" + eventName + '/_timings-finalOnlyNoChrome.js');
+	    window.states = __webpack_require__(55)("./" + eventName + '/_timings-finalOnlyNoChrome.js');
 	  } else {
-	    window.states = __webpack_require__(59)("./" + eventName + '/_timings.js');
+	    window.states = __webpack_require__(58)("./" + eventName + '/_timings.js');
 	  }
 	}
 	
@@ -2128,11 +2128,14 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var CANVAS_WIDTH = exports.CANVAS_WIDTH = 1080;
-	var CANVAS_HEIGHT = exports.CANVAS_HEIGHT = 640;
+	var CANVAS_WIDTH = exports.CANVAS_WIDTH = 1280;
+	var CANVAS_HEIGHT = exports.CANVAS_HEIGHT = 760;
 	
-	var BACKEND_CANVAS_WIDTH = exports.BACKEND_CANVAS_WIDTH = CANVAS_WIDTH * 2 - 112;
-	var BACKEND_CANVAS_HEIGHT = exports.BACKEND_CANVAS_HEIGHT = CANVAS_HEIGHT * 2;
+	var BACKEND_CANVAS_WIDTH = exports.BACKEND_CANVAS_WIDTH = 2048;
+	var BACKEND_CANVAS_HEIGHT = exports.BACKEND_CANVAS_HEIGHT = 1280;
+	
+	// Doesn't change the canvas size?
+	
 	
 	var LOGO_TOP = exports.LOGO_TOP = 40;
 	var LOGO_LEFT = exports.LOGO_LEFT = 40;
@@ -8211,7 +8214,6 @@
 	    this.context = context;
 	    this.pointUtils = new _pointUtils2.default(imageElement);
 	    this.canvasUtils = new _canvasUtils2.default(imageElement, canvas, context);
-	
 	    this.animateInMultiAura(duration);
 	  }
 	
@@ -8363,9 +8365,9 @@
 	  }, {
 	    key: 'getMultiAuraFill',
 	    value: function getMultiAuraFill() {
-	      var tempCanvas = this.canvasUtils.createHiDPICanvas(this.imageElement.canvasWidth, this.imageElement.canvasHeight);
-	      tempCanvas.width = this.imageElement.canvasWidth;
-	      tempCanvas.height = this.imageElement.canvasHeight;
+	      var tempCanvas = this.canvasUtils.createHiDPICanvas(this.canvas.width, this.canvas.height);
+	      tempCanvas.width = this.canvas.width;
+	      tempCanvas.height = this.canvas.height;
 	      var tempContext = tempCanvas.getContext('2d');
 	      animationUtils.setSmoothing(tempContext);
 	
@@ -9051,13 +9053,12 @@
 	exports.default = Controls;
 
 /***/ },
-/* 40 */,
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-fast.js": 42,
-		"./next/_timings-fast.js": 43
+		"./horizon/_timings-fast.js": 41,
+		"./next/_timings-fast.js": 42
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9070,8 +9071,101 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 41;
+	webpackContext.id = 40;
 
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
+	  NAME: 'flash',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'analyze',
+	  DURATION: 1
+	}];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'complete',
+	  DURATION: 0.2
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'forehead',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'eyes',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'ears',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'nose',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'mouth',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'chin',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 0.2
+	}];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 0.2
+	}, {
+	  NAME: 'allFeatures',
+	  DURATION: 0.3
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 0.2
+	}];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 4
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 2
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 4
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 2
+	}];
 
 /***/ },
 /* 42 */
@@ -9146,99 +9240,6 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 4
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 2
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 4
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 2
-	}];
-
-/***/ },
-/* 43 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
-	  NAME: 'flash',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'analyze',
-	  DURATION: 1
-	}];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'complete',
-	  DURATION: 0.2
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'forehead',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'eyes',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'ears',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'nose',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'mouth',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'chin',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 0.2
-	}];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 0.2
-	}, {
-	  NAME: 'allFeatures',
-	  DURATION: 0.3
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 0.2
-	}];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
 	  DURATION: 1
 	}, {
 	  NAME: 'animateInVignette',
@@ -9263,12 +9264,12 @@
 	}];
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-finalOnly.js": 45,
-		"./next/_timings-finalOnly.js": 46
+		"./horizon/_timings-finalOnly.js": 44,
+		"./next/_timings-finalOnly.js": 45
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9281,8 +9282,53 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 44;
+	webpackContext.id = 43;
 
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 0
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 0
+	}, {
+	  NAME: 'chrome',
+	  DURATION: 0
+	}];
 
 /***/ },
 /* 45 */
@@ -9311,51 +9357,6 @@
 	  NAME: 'animateInBackground',
 	  DURATION: 0
 	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 0
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 0
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 0
-	}];
-
-/***/ },
-/* 46 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
 	  NAME: 'animateInVignette',
 	  DURATION: 0
 	}, {
@@ -9378,12 +9379,12 @@
 	}];
 
 /***/ },
-/* 47 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-noFace.js": 48,
-		"./next/_timings-noFace.js": 49
+		"./horizon/_timings-noFace.js": 47,
+		"./next/_timings-noFace.js": 48
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9396,11 +9397,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 47;
+	webpackContext.id = 46;
 
 
 /***/ },
-/* 48 */
+/* 47 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9445,7 +9446,7 @@
 	}];
 
 /***/ },
-/* 49 */
+/* 48 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9493,12 +9494,12 @@
 	}];
 
 /***/ },
-/* 50 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./horizon/_timings-noAura.js": 51,
-		"./next/_timings-noAura.js": 52
+		"./horizon/_timings-noAura.js": 50,
+		"./next/_timings-noAura.js": 51
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9511,8 +9512,83 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 50;
+	webpackContext.id = 49;
 
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
+	  NAME: 'flash',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'analyze',
+	  DURATION: 1
+	}];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'complete',
+	  DURATION: 0.2
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 2
+	}, {
+	  NAME: 'forehead',
+	  DURATION: 2
+	}, {
+	  NAME: 'eyes',
+	  DURATION: 2
+	}, {
+	  NAME: 'ears',
+	  DURATION: 2
+	}, {
+	  NAME: 'nose',
+	  DURATION: 2
+	}, {
+	  NAME: 'mouth',
+	  DURATION: 2
+	}, {
+	  NAME: 'chin',
+	  DURATION: 2
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 2
+	}];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
+	  NAME: 'zoom',
+	  DURATION: 0.5
+	}, {
+	  NAME: 'face',
+	  DURATION: 2
+	}, {
+	  NAME: 'allFeatures',
+	  DURATION: 5
+	}, {
+	  NAME: 'emotion',
+	  DURATION: 2
+	}];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [];
 
 /***/ },
 /* 51 */
@@ -9591,6 +9667,28 @@
 
 /***/ },
 /* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings-noChrome.js": 53,
+		"./next/_timings-noChrome.js": 54
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 52;
+
+
+/***/ },
+/* 53 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9660,31 +9758,21 @@
 	  DURATION: 2
 	}];
 	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [];
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 4
+	}];
 	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [];
-
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings-noChrome.js": 54,
-		"./next/_timings-noChrome.js": 55
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 53;
-
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 2
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 4
+	}];
 
 /***/ },
 /* 54 */
@@ -9759,22 +9847,147 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
+	  DURATION: 1
+	}, {
+	  NAME: 'animateInVignette',
 	  DURATION: 2
 	}, {
 	  NAME: 'animateInHalo',
-	  DURATION: 4
+	  DURATION: 3
 	}];
 	
 	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
+	  NAME: 'animateInMultiAura',
+	  DURATION: 1
 	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 4
+	  NAME: 'pause',
+	  DURATION: 0.5
 	}];
 
 /***/ },
 /* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings-finalOnlyNoChrome.js": 56,
+		"./next/_timings-finalOnlyNoChrome.js": 57
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 55;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHaloMulti',
+	  DURATION: 0
+	}];
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// All times are in seconds
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
+	
+	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
+	  NAME: 'zoomOut',
+	  DURATION: 0
+	}];
+	
+	// times are in seconds.
+	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
+	
+	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
+	
+	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
+	  NAME: 'animateInBackground',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInVignette',
+	  DURATION: 0
+	}, {
+	  NAME: 'animateInHalo',
+	  DURATION: 0
+	}];
+	
+	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
+	  NAME: 'animateInMultiAura',
+	  DURATION: 0
+	}];
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./horizon/_timings.js": 59,
+		"./next/_timings.js": 60
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 58;
+
+
+/***/ },
+/* 59 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9846,144 +10059,25 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 1
-	}, {
-	  NAME: 'animateInVignette',
 	  DURATION: 2
 	}, {
 	  NAME: 'animateInHalo',
-	  DURATION: 3
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInMultiAura',
+	  DURATION: 2
+	}, {
+	  NAME: 'chrome',
 	  DURATION: 1
-	}, {
-	  NAME: 'pause',
-	  DURATION: 0.5
-	}];
-
-/***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings-finalOnlyNoChrome.js": 57,
-		"./next/_timings-finalOnlyNoChrome.js": 58
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 56;
-
-
-/***/ },
-/* 57 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
 	}];
 	
 	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 0
+	  DURATION: 2
 	}, {
 	  NAME: 'animateInHaloMulti',
-	  DURATION: 0
-	}];
-
-/***/ },
-/* 58 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 0
+	  DURATION: 2
 	}, {
-	  NAME: 'animateInVignette',
-	  DURATION: 0
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 0
+	  NAME: 'chrome',
+	  DURATION: 1
 	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInMultiAura',
-	  DURATION: 0
-	}];
-
-/***/ },
-/* 59 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./horizon/_timings.js": 60,
-		"./next/_timings.js": 61
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 59;
-
 
 /***/ },
 /* 60 */
@@ -10058,99 +10152,6 @@
 	
 	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
 	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHalo',
-	  DURATION: 2
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 1
-	}];
-	
-	var STATES_AURA_MULTIPLE = exports.STATES_AURA_MULTIPLE = [{
-	  NAME: 'animateInBackground',
-	  DURATION: 2
-	}, {
-	  NAME: 'animateInHaloMulti',
-	  DURATION: 2
-	}, {
-	  NAME: 'chrome',
-	  DURATION: 1
-	}];
-
-/***/ },
-/* 61 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	// All times are in seconds
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var STATES_INIT_FACE = exports.STATES_INIT_FACE = [{
-	  NAME: 'flash',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'analyze',
-	  DURATION: 1
-	}];
-	
-	var STATES_FINAL_FACE = exports.STATES_FINAL_FACE = [{
-	  NAME: 'zoomOut',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'complete',
-	  DURATION: 0.2
-	}];
-	
-	// times are in seconds.
-	var STATES_SINGLE_FACE = exports.STATES_SINGLE_FACE = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 2
-	}, {
-	  NAME: 'forehead',
-	  DURATION: 2
-	}, {
-	  NAME: 'eyes',
-	  DURATION: 2
-	}, {
-	  NAME: 'ears',
-	  DURATION: 2
-	}, {
-	  NAME: 'nose',
-	  DURATION: 2
-	}, {
-	  NAME: 'mouth',
-	  DURATION: 2
-	}, {
-	  NAME: 'chin',
-	  DURATION: 2
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 2
-	}];
-	
-	var STATES_MULTIPLE_FACES = exports.STATES_MULTIPLE_FACES = [{
-	  NAME: 'zoom',
-	  DURATION: 0.5
-	}, {
-	  NAME: 'face',
-	  DURATION: 2
-	}, {
-	  NAME: 'allFeatures',
-	  DURATION: 5
-	}, {
-	  NAME: 'emotion',
-	  DURATION: 2
-	}];
-	
-	var STATES_AURA_SINGLE = exports.STATES_AURA_SINGLE = [{
-	  NAME: 'animateInBackground',
 	  DURATION: 1
 	}, {
 	  NAME: 'animateInVignette',
@@ -10175,16 +10176,16 @@
 	}];
 
 /***/ },
-/* 62 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(63);
+	var content = __webpack_require__(62);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(65)(content, {});
+	var update = __webpack_require__(64)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10201,21 +10202,21 @@
 	}
 
 /***/ },
-/* 63 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(64)();
+	exports = module.exports = __webpack_require__(63)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "#main {\n  transform-origin: 0% 0%; }\n\n#main, #latest, #historical {\n  width: 3240px;\n  height: 1823px;\n  overflow: hidden; }\n  #main.single, #latest.single, #historical.single {\n    min-width: 2048px;\n    width: 2048px;\n    height: 1280px; }\n    #main.single .third, #latest.single .third, #historical.single .third {\n      width: 2048px; }\n    #main.single .image, #latest.single .image, #historical.single .image {\n      height: 1280px; }\n    #main.single .image-canvas, #latest.single .image-canvas, #historical.single .image-canvas {\n      height: 1280px;\n      width: 2048px; }\n\n#latest, #historical {\n  cursor: none; }\n\nbody, html {\n  height: 100%; }\n  body::-webkit-scrollbar, html::-webkit-scrollbar {\n    width: 0 !important; }\n\nbody {\n  font-family: \"Roboto Mono\", \"Roboto\", sans-serif;\n  margin: 0;\n  background-color: #D7D7D7;\n  font-size: 16px; }\n\n#historical {\n  font-size: 0;\n  min-width: 3240px; }\n\n.show-latest #historical {\n  display: none; }\n\n.show-historical #latest {\n  display: none; }\n\n.controls {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  height: 3rem;\n  width: 100%;\n  background-color: rgba(250, 250, 250, 0.3);\n  border-top: solid 1px #aaa;\n  box-sizing: border-box;\n  padding: .5rem 1rem; }\n\n.controls-section {\n  display: inline-block;\n  border-right: solid 1px #ccc;\n  margin-right: 1rem;\n  padding-right: 1rem; }\n\n.controls-button {\n  -webkit-appearance: none;\n  font-family: \"Roboto Mono\", \"Roboto\", sans-serif;\n  border: 0;\n  height: 2rem;\n  height: 2rem;\n  box-sizing: border-box;\n  padding: 0 1rem;\n  color: #333;\n  background-color: #b3cee3;\n  cursor: pointer; }\n  .controls-button:not(:last-child) {\n    margin-right: 1rem; }\n  .controls-button:focus {\n    outline: none;\n    background-color: #69aadc; }\n  .controls-button:disabled {\n    background-color: #ccc;\n    opacity: .6;\n    cursor: default; }\n\n.controls-radio-wrap {\n  display: inline-block; }\n  .controls-radio-wrap:not(:first-child) {\n    margin-left: 1rem; }\n\n.controls-views-choice {\n  display: none; }\n  .controls-views-choice + .controls-views-label {\n    cursor: pointer;\n    background-color: #b3cee3; }\n    .controls-views-choice + .controls-views-label:hover, .controls-views-choice + .controls-views-label:focus {\n      background-color: #69aadc; }\n    .controls-views-choice + .controls-views-label::before {\n      content: 'View '; }\n    .controls-views-choice + .controls-views-label::after {\n      content: '?'; }\n  .controls-views-choice:checked + .controls-views-label {\n    cursor: default;\n    background-color: transparent; }\n    .controls-views-choice:checked + .controls-views-label:hover, .controls-views-choice:checked + .controls-views-label:focus {\n      background-color: transparent; }\n    .controls-views-choice:checked + .controls-views-label::before {\n      content: 'Now Viewing '; }\n    .controls-views-choice:checked + .controls-views-label::after {\n      content: ''; }\n\n.controls-views-label {\n  padding: 0 1em;\n  color: #333;\n  height: 2rem;\n  font-size: .75rem;\n  display: inline-block;\n  line-height: 2rem; }\n\n.third {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  width: 1080px;\n  height: 1823px;\n  background-color: white;\n  vertical-align: top; }\n  .third:not(:last-child) {\n    margin-right: 0px; }\n  .third:not(:first-child) {\n    margin-left: 0px; }\n\n.image {\n  height: 640px;\n  background-color: #D4E2E5; }\n\n.image-canvas {\n  width: 1080px;\n  height: 640px; }\n\n.json {\n  height: 1183px;\n  background-color: #232E35;\n  overflow: hidden;\n  padding: 63px 100px;\n  box-sizing: border-box;\n  position: relative; }\n\n.json-text {\n  color: #91969A;\n  font-size: 29px;\n  font-family: \"Roboto Mono\", monospace;\n  max-width: 100%;\n  word-break: break-word; }\n  .json-text_long {\n    font-size: 16px; }\n\n.json-text-em {\n  color: #fff; }\n  .json-text-em_joy {\n    color: #FFD600; }\n  .json-text-em_sorrow {\n    color: #2196F3; }\n  .json-text-em_anger {\n    color: #f44336; }\n  .json-text-em_surprise {\n    color: #AB47BC; }\n\n.json-title {\n  color: #fff;\n  font-weight: normal;\n  line-height: 1em;\n  margin: 0 0 1em 0;\n  font-size: 20px;\n  letter-spacing: 2px;\n  font-family: \"Roboto Light\", \"Roboto\", sans-serif; }\n\n.scrim {\n  background-color: #232E35;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0; }\n\n.threeup-wrap {\n  width: 1080px;\n  height: 607.66667px;\n  display: inline-block; }\n  .threeup-wrap:nth-child(1) .threeup-hero {\n    transform-origin: 0px 0px; }\n  .threeup-wrap:nth-child(2) .threeup-hero {\n    transform-origin: 1620px 0px; }\n  .threeup-wrap:nth-child(3) .threeup-hero {\n    transform-origin: 3240px 0px; }\n  .threeup-wrap:nth-child(4) .threeup-hero {\n    transform-origin: 0px 911.5px; }\n  .threeup-wrap:nth-child(5) .threeup-hero {\n    transform-origin: 1620px 911.5px; }\n  .threeup-wrap:nth-child(6) .threeup-hero {\n    transform-origin: 3240px 911.5px; }\n  .threeup-wrap:nth-child(7) .threeup-hero {\n    transform-origin: 0px 1823px; }\n  .threeup-wrap:nth-child(8) .threeup-hero {\n    transform-origin: 1620px 1823px; }\n  .threeup-wrap:nth-child(9) .threeup-hero {\n    transform-origin: 3240px 1823px; }\n  .threeup-wrap:nth-child(10) .threeup-hero {\n    transform-origin: 0px 2734.5px; }\n  .threeup-wrap:nth-child(3n-2) {\n    margin-right: 0px; }\n  .threeup-wrap:nth-child(3n-1) {\n    margin-left: 0px;\n    margin-right: 0px; }\n  .threeup-wrap:nth-child(3n) {\n    margin-left: 0px; }\n\n.threeup {\n  width: 1080px;\n  height: 607.66667px;\n  background-size: cover;\n  background-position: top left;\n  box-sizing: border-box; }\n\n.threeup-hero {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 3240px;\n  height: 1823px;\n  transform: scale(0.33333);\n  display: inline-block;\n  background-size: cover;\n  background-position: top left;\n  transition-property: transform;\n  transition-duration: 2s;\n  transform-origin: 0 0;\n  backface-visibility: hidden; }\n\n.threeup-hero-active {\n  transform: none; }\n", "", {"version":3,"sources":["/./ui/ui/styles/_base.scss","/./ui/ui/styles/_variables.scss","/./ui/ui/styles/_colors.scss","/./ui/ui/styles/_controls.scss","/./ui/ui/styles/_third.scss","/./ui/ui/styles/_image.scss","/./ui/ui/styles/_json.scss","/./ui/ui/styles/_threeup.scss"],"names":[],"mappings":"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","file":"main.scss","sourcesContent":["#main {\n  transform-origin: 0% 0%;\n}\n\n#main, #latest, #historical {\n  width: $third-width * 3 + $bezel * 4;\n  height: $third-height;\n  overflow: hidden;\n\n  &.single {\n    min-width: $third-width * 2 - 112px;\n    width: $third-width * 2 - 112px;\n    height: $image-height * 2;\n    .third {\n      width: $third-width * 2 - 112px;\n    }\n    .image {\n      height: $image-height * 2;\n    }\n    .image-canvas {\n      height: $image-height * 2;\n      width: $third-width * 2 - 112px;\n    }\n  }\n}\n\n#latest, #historical {\n  cursor: none;\n}\n\nbody, html {\n  height: 100%;\n  &::-webkit-scrollbar {\n    width: 0 !important;\n  }\n}\n\nbody {\n  font-family: $stack;\n  margin: 0;\n  background-color: $bezel-grey;\n  font-size: 16px;\n}\n\n#historical {\n  font-size: 0;\n  min-width: $third-width * 3 + $grid-bezel * 4;\n}\n\n.show-latest {\n  #historical {\n    display: none;\n  }\n}\n\n.show-historical {\n  #latest {\n    display: none;\n  }\n}\n","$stack: \"Roboto Mono\", \"Roboto\", sans-serif;\n\n\n$third-width: 1080px;\n$third-height: 1823px;\n$threeup-height: $third-height / 3;\n\n$bezel: 0px;\n$grid-bezel: 0px;\n\n$image-height: 640px;\n$json-height: $third-height - $image-height;\n","$bezel-grey: #D7D7D7;\n$json-bg: #232E35;\n\n$json-text: #91969A;\n$json-em: #fff;\n\n$json-joy: #FFD600;\n$json-sorrow: #2196F3;\n$json-anger: #f44336;\n$json-surprise: #AB47BC;\n",".controls {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  height: 3rem;\n  width: 100%;\n  background-color: rgba(250, 250, 250, .3);\n  border-top: solid 1px #aaa;\n  box-sizing: border-box;\n  padding: .5rem 1rem;\n}\n\n.controls-section {\n  display: inline-block;\n  border-right: solid 1px #ccc;\n  margin-right: 1rem;\n  padding-right: 1rem;\n}\n\n.controls-button {\n  -webkit-appearance: none;\n  font-family: $stack;\n  border: 0;\n  height: 2rem;\n  height: 2rem;\n  box-sizing: border-box;\n  padding: 0 1rem;\n  color: #333;\n  background-color: #b3cee3;\n  cursor: pointer;\n  &:not(:last-child) {\n    margin-right: 1rem;\n  }\n  &:focus {\n    outline: none;\n    background-color: #69aadc;\n  }\n  &:disabled {\n    background-color: #ccc;\n    opacity: .6;\n    cursor: default;\n  }\n}\n\n.controls-radio-wrap {\n  display: inline-block;\n  &:not(:first-child) {\n    margin-left: 1rem;\n  }\n}\n\n.controls-views-choice {\n  display: none;\n  + .controls-views-label {\n    cursor: pointer;\n    background-color: #b3cee3;\n    &:hover, &:focus {\n      background-color: #69aadc;\n    }\n    &::before {\n      content: 'View ';\n    }\n    &::after {\n      content: '?';\n    }\n  }\n  &:checked + .controls-views-label {\n    cursor: default;\n    background-color: transparent;\n    &:hover, &:focus {\n      background-color: transparent;\n    }\n    &::before {\n      content: 'Now Viewing ';\n    }\n    &::after {\n      content: '';\n    }\n  }\n}\n\n.controls-views-label {\n  padding: 0 1em;\n  color: #333;\n  height: 2rem;\n  font-size: .75rem;\n  display: inline-block;\n  line-height: 2rem;\n}\n",".third {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  width: $third-width;\n  height: $third-height;\n  background-color: white;\n  vertical-align: top;\n  &:not(:last-child) {\n    margin-right: $bezel;\n  }\n  &:not(:first-child) {\n    margin-left: $bezel;\n  }\n}\n",".image {\n  height: $image-height;\n  background-color: #D4E2E5;\n}\n\n.image-canvas {\n  width: $third-width;\n  height: $image-height;\n}\n",".json {\n  height: $json-height;\n  background-color: $json-bg;\n  overflow: hidden;\n  padding: 63px 100px;\n  box-sizing: border-box;\n  position: relative;\n}\n\n.json-text {\n  color: $json-text;\n  font-size: 29px;\n  font-family: \"Roboto Mono\", monospace;\n  max-width: 100%;\n  word-break: break-word;\n\n  &_long {\n    font-size: 16px;\n  }\n}\n\n.json-text-em {\n  color: $json-em;\n\n  &_joy {\n    color: $json-joy;\n  }\n\n  &_sorrow {\n    color: $json-sorrow;\n  }\n\n  &_anger {\n    color: $json-anger;\n  }\n\n  &_surprise {\n    color: $json-surprise;\n  }\n}\n\n.json-title {\n  color: $json-em;\n  font-weight: normal;\n  line-height: 1em;\n  margin: 0 0 1em 0;\n  font-size: 20px;\n  letter-spacing: 2px;\n  font-family: \"Roboto Light\", \"Roboto\", sans-serif\n}\n\n.scrim {\n  background-color: $json-bg;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n}\n",".threeup-wrap {\n  width: $third-width;\n  height: $threeup-height;\n  display: inline-block;\n\n  @for $i from 0 through 9 {\n    $col: $i % 3;\n    $row: floor(( 9 - (9 - $i)) / 3);\n    &:nth-child(#{ $i + 1}) {\n      .threeup-hero {\n        transform-origin: #{ $third-width * ( $col * 1.5 ) + ( $col * $grid-bezel * 2 ) } #{ $threeup-height * ( $row * 1.5 ) };\n      }\n    }\n  }\n  &:nth-child(3n-2) {\n    margin-right: $grid-bezel;\n  }\n  &:nth-child(3n-1) {\n    margin-left: $grid-bezel;\n    margin-right: $grid-bezel;\n  }\n  &:nth-child(3n) {\n    margin-left: $grid-bezel;\n  }\n}\n\n.threeup {\n  width: $third-width;\n  height: $threeup-height;\n  background-size: cover;\n  background-position: top left;\n  box-sizing: border-box;\n}\n\n.threeup-hero {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: $third-width * 3 + $grid-bezel * 4;\n  height: (($third-width * 3 + $grid-bezel * 4) / ($third-width * 3)) * $third-height;\n  transform: scale(0.33333333);\n  display: inline-block;\n  background-size: cover;\n  background-position: top left;\n  transition-property: transform;\n  transition-duration: 2s;\n  transform-origin: 0 0;\n  backface-visibility: hidden;\n}\n\n.threeup-hero-active {\n  transform: none;\n}\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "#main {\n  transform-origin: 0% 0%; }\n\n#main, #latest, #historical {\n  width: 3840px;\n  height: 2160px;\n  overflow: hidden; }\n  #main.single, #latest.single, #historical.single {\n    min-width: 2048px;\n    width: 2048px;\n    height: 1280px; }\n    #main.single .third, #latest.single .third, #historical.single .third {\n      width: 2048px; }\n    #main.single .image, #latest.single .image, #historical.single .image {\n      height: 1280px; }\n    #main.single .image-canvas, #latest.single .image-canvas, #historical.single .image-canvas {\n      height: 1280px;\n      width: 2048px; }\n\n#latest, #historical {\n  cursor: none; }\n\nbody, html {\n  height: 100%; }\n  body::-webkit-scrollbar, html::-webkit-scrollbar {\n    width: 0 !important; }\n\nbody {\n  font-family: \"Roboto Mono\", \"Roboto\", sans-serif;\n  margin: 0;\n  background-color: #D7D7D7;\n  font-size: 16px; }\n\n#historical {\n  font-size: 0;\n  min-width: 3840px; }\n\n.show-latest #historical {\n  display: none; }\n\n.show-historical #latest {\n  display: none; }\n\n.controls {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  height: 3rem;\n  width: 100%;\n  background-color: rgba(250, 250, 250, 0.3);\n  border-top: solid 1px #aaa;\n  box-sizing: border-box;\n  padding: .5rem 1rem; }\n\n.controls-section {\n  display: inline-block;\n  border-right: solid 1px #ccc;\n  margin-right: 1rem;\n  padding-right: 1rem; }\n\n.controls-button {\n  -webkit-appearance: none;\n  font-family: \"Roboto Mono\", \"Roboto\", sans-serif;\n  border: 0;\n  height: 2rem;\n  height: 2rem;\n  box-sizing: border-box;\n  padding: 0 1rem;\n  color: #333;\n  background-color: #b3cee3;\n  cursor: pointer; }\n  .controls-button:not(:last-child) {\n    margin-right: 1rem; }\n  .controls-button:focus {\n    outline: none;\n    background-color: #69aadc; }\n  .controls-button:disabled {\n    background-color: #ccc;\n    opacity: .6;\n    cursor: default; }\n\n.controls-radio-wrap {\n  display: inline-block; }\n  .controls-radio-wrap:not(:first-child) {\n    margin-left: 1rem; }\n\n.controls-views-choice {\n  display: none; }\n  .controls-views-choice + .controls-views-label {\n    cursor: pointer;\n    background-color: #b3cee3; }\n    .controls-views-choice + .controls-views-label:hover, .controls-views-choice + .controls-views-label:focus {\n      background-color: #69aadc; }\n    .controls-views-choice + .controls-views-label::before {\n      content: 'View '; }\n    .controls-views-choice + .controls-views-label::after {\n      content: '?'; }\n  .controls-views-choice:checked + .controls-views-label {\n    cursor: default;\n    background-color: transparent; }\n    .controls-views-choice:checked + .controls-views-label:hover, .controls-views-choice:checked + .controls-views-label:focus {\n      background-color: transparent; }\n    .controls-views-choice:checked + .controls-views-label::before {\n      content: 'Now Viewing '; }\n    .controls-views-choice:checked + .controls-views-label::after {\n      content: ''; }\n\n.controls-views-label {\n  padding: 0 1em;\n  color: #333;\n  height: 2rem;\n  font-size: .75rem;\n  display: inline-block;\n  line-height: 2rem; }\n\n.third {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  width: 1280px;\n  height: 2160px;\n  background-color: white;\n  vertical-align: top; }\n  .third:not(:last-child) {\n    margin-right: 0; }\n  .third:not(:first-child) {\n    margin-left: 0; }\n\n.image {\n  height: 760px;\n  background-color: #D4E2E5; }\n\n.image-canvas {\n  width: 1280px;\n  height: 760px; }\n\n.json {\n  height: 1400px;\n  background-color: #232E35;\n  overflow: hidden;\n  padding: 63px 100px;\n  box-sizing: border-box;\n  position: relative; }\n\n.json-text {\n  color: #91969A;\n  font-size: 29px;\n  font-family: \"Roboto Mono\", monospace;\n  max-width: 100%;\n  word-break: break-word; }\n  .json-text_long {\n    font-size: 16px; }\n\n.json-text-em {\n  color: #fff; }\n  .json-text-em_joy {\n    color: #FFD600; }\n  .json-text-em_sorrow {\n    color: #2196F3; }\n  .json-text-em_anger {\n    color: #f44336; }\n  .json-text-em_surprise {\n    color: #AB47BC; }\n\n.json-title {\n  color: #fff;\n  font-weight: normal;\n  line-height: 1em;\n  margin: 0 0 1em 0;\n  font-size: 20px;\n  letter-spacing: 2px;\n  font-family: \"Roboto Light\", \"Roboto\", sans-serif; }\n\n.scrim {\n  background-color: #232E35;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0; }\n\n.threeup-wrap {\n  width: 1280px;\n  height: 720px;\n  display: inline-block; }\n  .threeup-wrap:nth-child(1) .threeup-hero {\n    transform-origin: 0px 0px; }\n  .threeup-wrap:nth-child(2) .threeup-hero {\n    transform-origin: 1920px 0px; }\n  .threeup-wrap:nth-child(3) .threeup-hero {\n    transform-origin: 3840px 0px; }\n  .threeup-wrap:nth-child(4) .threeup-hero {\n    transform-origin: 0px 1080px; }\n  .threeup-wrap:nth-child(5) .threeup-hero {\n    transform-origin: 1920px 1080px; }\n  .threeup-wrap:nth-child(6) .threeup-hero {\n    transform-origin: 3840px 1080px; }\n  .threeup-wrap:nth-child(7) .threeup-hero {\n    transform-origin: 0px 2160px; }\n  .threeup-wrap:nth-child(8) .threeup-hero {\n    transform-origin: 1920px 2160px; }\n  .threeup-wrap:nth-child(9) .threeup-hero {\n    transform-origin: 3840px 2160px; }\n  .threeup-wrap:nth-child(10) .threeup-hero {\n    transform-origin: 0px 3240px; }\n  .threeup-wrap:nth-child(3n-2) {\n    margin-right: 0; }\n  .threeup-wrap:nth-child(3n-1) {\n    margin-left: 0;\n    margin-right: 0; }\n  .threeup-wrap:nth-child(3n) {\n    margin-left: 0; }\n\n.threeup {\n  width: 1280px;\n  height: 720px;\n  background-size: cover;\n  background-position: top left;\n  box-sizing: border-box; }\n\n.threeup-hero {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 3840px;\n  height: 2160px;\n  transform: scale(0.33333);\n  display: inline-block;\n  background-size: cover;\n  background-position: top left;\n  transition-property: transform;\n  transition-duration: 2s;\n  transform-origin: 0 0;\n  backface-visibility: hidden; }\n\n.threeup-hero-active {\n  transform: none; }\n", "", {"version":3,"sources":["/./ui/ui/styles/_base.scss","/./ui/ui/styles/_variables.scss","/./ui/ui/styles/_colors.scss","/./ui/ui/styles/_controls.scss","/./ui/ui/styles/_third.scss","/./ui/ui/styles/_image.scss","/./ui/ui/styles/_json.scss","/./ui/ui/styles/_threeup.scss"],"names":[],"mappings":"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","file":"main.scss","sourcesContent":["#main {\n  transform-origin: 0% 0%;\n}\n\n#main, #latest, #historical {\n  width: $third-width * 3 + $bezel * 4;\n  height: $third-height;\n  overflow: hidden;\n\n  &.single {\n    min-width: $single-width;\n    width: $single-width;\n    height: $single-height;\n    .third {\n      width: $single-width;\n    }\n    .image {\n      height: $single-height;\n    }\n    .image-canvas {\n      height: $single-height;\n      width: $single-width;\n    }\n  }\n}\n\n#latest, #historical {\n  cursor: none;\n}\n\nbody, html {\n  height: 100%;\n  &::-webkit-scrollbar {\n    width: 0 !important;\n  }\n}\n\nbody {\n  font-family: $stack;\n  margin: 0;\n  background-color: $bezel-grey;\n  font-size: 16px;\n}\n\n#historical {\n  font-size: 0;\n  min-width: $third-width * 3 + $grid-bezel * 4;\n}\n\n.show-latest {\n  #historical {\n    display: none;\n  }\n}\n\n.show-historical {\n  #latest {\n    display: none;\n  }\n}\n","$stack: \"Roboto Mono\", \"Roboto\", sans-serif;\n\n\n$third-width: 1280px;\n$third-height: 2160px;\n$threeup-height: $third-height / 3;\n\n$single-width: 2048px;\n$single-height: 1280px;\n\n$bezel: 0;\n$grid-bezel: 0;\n\n$image-height: 760px;\n$json-height: $third-height - $image-height;\n","$bezel-grey: #D7D7D7;\n$json-bg: #232E35;\n\n$json-text: #91969A;\n$json-em: #fff;\n\n$json-joy: #FFD600;\n$json-sorrow: #2196F3;\n$json-anger: #f44336;\n$json-surprise: #AB47BC;\n",".controls {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  height: 3rem;\n  width: 100%;\n  background-color: rgba(250, 250, 250, .3);\n  border-top: solid 1px #aaa;\n  box-sizing: border-box;\n  padding: .5rem 1rem;\n}\n\n.controls-section {\n  display: inline-block;\n  border-right: solid 1px #ccc;\n  margin-right: 1rem;\n  padding-right: 1rem;\n}\n\n.controls-button {\n  -webkit-appearance: none;\n  font-family: $stack;\n  border: 0;\n  height: 2rem;\n  height: 2rem;\n  box-sizing: border-box;\n  padding: 0 1rem;\n  color: #333;\n  background-color: #b3cee3;\n  cursor: pointer;\n  &:not(:last-child) {\n    margin-right: 1rem;\n  }\n  &:focus {\n    outline: none;\n    background-color: #69aadc;\n  }\n  &:disabled {\n    background-color: #ccc;\n    opacity: .6;\n    cursor: default;\n  }\n}\n\n.controls-radio-wrap {\n  display: inline-block;\n  &:not(:first-child) {\n    margin-left: 1rem;\n  }\n}\n\n.controls-views-choice {\n  display: none;\n  + .controls-views-label {\n    cursor: pointer;\n    background-color: #b3cee3;\n    &:hover, &:focus {\n      background-color: #69aadc;\n    }\n    &::before {\n      content: 'View ';\n    }\n    &::after {\n      content: '?';\n    }\n  }\n  &:checked + .controls-views-label {\n    cursor: default;\n    background-color: transparent;\n    &:hover, &:focus {\n      background-color: transparent;\n    }\n    &::before {\n      content: 'Now Viewing ';\n    }\n    &::after {\n      content: '';\n    }\n  }\n}\n\n.controls-views-label {\n  padding: 0 1em;\n  color: #333;\n  height: 2rem;\n  font-size: .75rem;\n  display: inline-block;\n  line-height: 2rem;\n}\n",".third {\n  display: inline-block;\n  position: relative;\n  margin: 0;\n  width: $third-width;\n  height: $third-height;\n  background-color: white;\n  vertical-align: top;\n  &:not(:last-child) {\n    margin-right: $bezel;\n  }\n  &:not(:first-child) {\n    margin-left: $bezel;\n  }\n}\n",".image {\n  height: $image-height;\n  background-color: #D4E2E5;\n}\n\n.image-canvas {\n  width: $third-width;\n  height: $image-height;\n}\n",".json {\n  height: $json-height;\n  background-color: $json-bg;\n  overflow: hidden;\n  padding: 63px 100px;\n  box-sizing: border-box;\n  position: relative;\n}\n\n.json-text {\n  color: $json-text;\n  font-size: 29px;\n  font-family: \"Roboto Mono\", monospace;\n  max-width: 100%;\n  word-break: break-word;\n\n  &_long {\n    font-size: 16px;\n  }\n}\n\n.json-text-em {\n  color: $json-em;\n\n  &_joy {\n    color: $json-joy;\n  }\n\n  &_sorrow {\n    color: $json-sorrow;\n  }\n\n  &_anger {\n    color: $json-anger;\n  }\n\n  &_surprise {\n    color: $json-surprise;\n  }\n}\n\n.json-title {\n  color: $json-em;\n  font-weight: normal;\n  line-height: 1em;\n  margin: 0 0 1em 0;\n  font-size: 20px;\n  letter-spacing: 2px;\n  font-family: \"Roboto Light\", \"Roboto\", sans-serif\n}\n\n.scrim {\n  background-color: $json-bg;\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  left: 0;\n  top: 0;\n}\n",".threeup-wrap {\n  width: $third-width;\n  height: $threeup-height;\n  display: inline-block;\n\n  @for $i from 0 through 9 {\n    $col: $i % 3;\n    $row: floor(( 9 - (9 - $i)) / 3);\n    &:nth-child(#{ $i + 1}) {\n      .threeup-hero {\n        transform-origin: #{ $third-width * ( $col * 1.5 ) + ( $col * $grid-bezel * 2 ) } #{ $threeup-height * ( $row * 1.5 ) };\n      }\n    }\n  }\n  &:nth-child(3n-2) {\n    margin-right: $grid-bezel;\n  }\n  &:nth-child(3n-1) {\n    margin-left: $grid-bezel;\n    margin-right: $grid-bezel;\n  }\n  &:nth-child(3n) {\n    margin-left: $grid-bezel;\n  }\n}\n\n.threeup {\n  width: $third-width;\n  height: $threeup-height;\n  background-size: cover;\n  background-position: top left;\n  box-sizing: border-box;\n}\n\n.threeup-hero {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: $third-width * 3 + $grid-bezel * 4;\n  height: (($third-width * 3 + $grid-bezel * 4) / ($third-width * 3)) * $third-height;\n  transform: scale(0.33333333);\n  display: inline-block;\n  background-size: cover;\n  background-position: top left;\n  transition-property: transform;\n  transition-duration: 2s;\n  transform-origin: 0 0;\n  backface-visibility: hidden;\n}\n\n.threeup-hero-active {\n  transform: none;\n}\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 64 */
+/* 63 */
 /***/ function(module, exports) {
 
 	/*
@@ -10271,7 +10272,7 @@
 
 
 /***/ },
-/* 65 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

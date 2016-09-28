@@ -204,7 +204,7 @@ module.exports = {
       }
 
       this.github.gists.create({
-        'description': 'Google I/O photo session',
+        'description': 'Horizon photo session',
         'public': false,
         'files': files
       }, (err, res) => {

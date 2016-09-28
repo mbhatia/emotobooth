@@ -8,18 +8,18 @@
   overflow: hidden;
 
   &.single {
-    min-width: $third-width * 2 - 112px;
-    width: $third-width * 2 - 112px;
-    height: $image-height * 2;
+    min-width: $single-width;
+    width: $single-width;
+    height: $single-height;
     .third {
-      width: $third-width * 2 - 112px;
+      width: $single-width;
     }
     .image {
-      height: $image-height * 2;
+      height: $single-height;
     }
     .image-canvas {
-      height: $image-height * 2;
-      width: $third-width * 2 - 112px;
+      height: $single-height;
+      width: $single-width;
     }
   }
 }
