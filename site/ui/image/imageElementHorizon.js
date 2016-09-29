@@ -117,14 +117,14 @@ export default class ImageElement extends PanelComponent {
     }
 
     // Handle Kara Place Face Condition
-    if (!json.responses) {
-      window.console.log('Kara Place Identified');
-      return;
-    }
-    if (!json.responses[0].faceAnnotations) {
-      window.console.log('Kara Place Identified');
-      return;
-    }
+    // if (!json.responses) {
+    //   window.console.log('Kara Place Identified');
+    //   return;
+    // }
+    // if (!json.responses[0].faceAnnotations) {
+    //   window.console.log('Kara Place Identified');
+    //   return;
+    // }
     //
 
     this.canvasUtils.loadImage(json, imgPath);
