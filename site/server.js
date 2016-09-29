@@ -38,6 +38,8 @@ let prepopulateArray = [];
 
 logger.level = 'debug';
 
+var highestScore = 0;
+
 // Parse args, read config, and configure
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -258,6 +260,7 @@ function scoreSession(sess) {
       }
     }
   }
+  highestScore = highScore;
   sess.highestScoredKey = highestScoredKey;
   return sess;
 }
@@ -289,9 +292,11 @@ function sessionComplete(job, finish) {
         //client.publish('new_image', JSON.stringify(sess[scoreSession(sess)]));
         sess = scoreSession(sess);
         const topImages = topThreeImages(sess);
-        if (topImages) {
+        if (topImages && highestScore !== -9999) {
           socket.emit('new_image', JSON.stringify(topImages));
           processFinalImages(sess);
+        } else {
+          console.log('No top images or no faces :( try taking more photos');
         }
 
         // sess.highestScoredKey = getHighestScoredKey(sess);
