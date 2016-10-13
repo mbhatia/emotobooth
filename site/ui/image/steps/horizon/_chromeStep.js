@@ -164,7 +164,7 @@ export default class ChromeStep {
     }
   }
 
-  drawChromeHex(height, emotion, strength, num, progress, radius = animationUtils.CHROME_HEX_RADIUS) {
+  drawChromeHex(height, emotion, strength, num, progress, radius = animationUtils.CHROME_HEX_RADIUS) {;
     if (num >= animationUtils.CHROME_MAX_ITEMS) {
       return;
     }
@@ -181,6 +181,9 @@ export default class ChromeStep {
     } else {
       x = animationUtils.CHROME_HORIZONTAL_PADDING + ((num % (animationUtils.CHROME_MAX_ITEMS / animationUtils.CHROME_MAX_ROWS)) * animationUtils.CHROME_ITEM_WIDTH);
       y = this.canvas.height - height + (animationUtils.CHROME_VERTICAL_PADDING) + (((Math.floor(num / (animationUtils.CHROME_MAX_ITEMS) / animationUtils.CHROME_MAX_ROWS))) * animationUtils.CHROME_SINGLE_LINE_HEIGHT) + ((Math.floor(num / (animationUtils.CHROME_MAX_ITEMS / animationUtils.CHROME_MAX_ROWS))) * animationUtils.CHROME_SPACE_BETWEEN_LINES);
+      if (num >= 5) {
+        y += 27;
+      }
     }
 
     this.context.beginPath();
