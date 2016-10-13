@@ -164,7 +164,7 @@ export default class ChromeStep {
     }
   }
 
-  drawChromeHex(height, emotion, strength, num, progress, radius = animationUtils.CHROME_HEX_RADIUS) {;
+  drawChromeHex(height, emotion, strength, num, progress, radius = animationUtils.CHROME_HEX_RADIUS) {
     if (num >= animationUtils.CHROME_MAX_ITEMS) {
       return;
     }

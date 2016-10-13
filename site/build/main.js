@@ -7842,7 +7842,7 @@
 	    key: 'drawChromeHex',
 	    value: function drawChromeHex(height, emotion, strength, num, progress) {
 	      var radius = arguments.length <= 5 || arguments[5] === undefined ? animationUtils.CHROME_HEX_RADIUS : arguments[5];
-	      ;
+	
 	      if (num >= animationUtils.CHROME_MAX_ITEMS) {
 	        return;
 	      }
