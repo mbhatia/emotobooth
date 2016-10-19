@@ -1,4 +1,4 @@
-/* global document, single, XMLHttpRequest */
+/* global window, document, single, XMLHttpRequest */
 
 'use strict';
 

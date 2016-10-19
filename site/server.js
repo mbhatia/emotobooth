@@ -325,7 +325,7 @@ connectJob('sessionComplete', sessionComplete);
 function processNewImage(imagePath, imageData) {
   if (!imageData) {
     imageData = {
-      id: uuid.v4(),
+      id: (new Date()).getTime(),
       path: imagePath,
       sessionId: sessionId,
       name: path.basename(imagePath, path.extname(imagePath)),
@@ -668,7 +668,8 @@ function processFinalImages(sess) {
       path.join(__dirname, 'scripts/phantomChildProcess.js'),
       outJs,
       sess[incompleteSession].wasProcessed === 1 ? outChromeless: out,
-      sess[incompleteSession].wasProcessed === 1 ? 'finalOnlyNoChrome' : 'finalOnly'
+      sess[incompleteSession].wasProcessed === 1 ? 'finalOnlyNoChrome' : 'finalOnly',
+      1000
     ]
 
     console.log('running render on ', sess[incompleteSession].id);
@@ -692,7 +693,7 @@ function runPhantom(childArgs, incompleteSession) {
   cp.execFile(phantomBinPath, childArgs,
     (err, stdout, stderr) => {
       //console.log('complete');
-      console.log(err, stdout, stderr);
+      // console.log(err, stdout, stderr);
 
       if (err) {
         console.log('error rendering final', incompleteSession.id);
@@ -700,20 +701,38 @@ function runPhantom(childArgs, incompleteSession) {
         // setTimeout(() => {
           //runPhantom(childArgs, incompleteSession);
         // }, 3000)
-      } else {
-        console.log('completed');
       }
-      if (incompleteSession) {
-        logger.info(sprintf('Saved finished image: %s', incompleteSession.finalPath));
-        incompleteSession.complete = true;
-        sessionImages[incompleteSession.sessionId][incompleteSession.id] = incompleteSession;
+      if (stdout.indexOf('timeline complete') !== -1 && stdout.indexOf('aura complete') !== -1) {
+        if (incompleteSession) {
+          logger.info(sprintf('Saved finished image: %s', incompleteSession.finalPath));
+          incompleteSession.complete = true;
+          sessionImages[incompleteSession.sessionId][incompleteSession.id] = incompleteSession;
 
-        console.log('Running session ', incompleteSession.sessionId);
-        processFinalImages(sessionImages[incompleteSession.sessionId]);
+          console.log('Running session ', incompleteSession.sessionId);
+          processFinalImages(sessionImages[incompleteSession.sessionId]);
+        }
+
+      } else {
+        console.log('NO IMAGE SAVED!!');
+        childArgs[4] = childArgs[4] + 2000;
+        console.log(childArgs[4]);
+        runPhantom(childArgs, incompleteSession);
       }
     }
   )
 }
+
+function testPhantom() {
+  var childArgs = [ '/vagrant/site/scripts/phantomChildProcess.js',
+  'out/1476731320805.js',
+  'out/' + (new Date()).getTime() + '-final-chromeless.jpg',
+  'finalOnlyNoChrome',
+  1000 ];
+
+  runPhantom(childArgs, false);
+}
+
+//setInterval(testPhantom, 1000);
 
 //
 // File watcher/job queue interface
@@ -872,12 +891,11 @@ io.on('connection', function(socket) {
 
   socket.on('endSession', (data) => {
     console.log('END SESSION');
-
     if (sessionImages[sessionId]) {
       sessionImages[sessionId].complete = true;
     }
     callNextJobs('sessionEnd', {
-      id: uuid.v4()
+      id: (new Date()).getTime()
     });
   });
 
@@ -899,7 +917,7 @@ io.on('connection', function(socket) {
     }
     sessionId++;
     callNextJobs('sessionEnd', {
-      id: uuid.v4()
+      id: (new Date()).getTime()
     });
   });
 
