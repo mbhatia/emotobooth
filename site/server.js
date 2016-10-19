@@ -286,7 +286,7 @@ function sessionComplete(job, finish) {
           }
         }
       }
-      console.log(sess);
+
       if (allComplete) {
         console.log('ALL IMAGES PROCESSED');
         //client.publish('new_image', JSON.stringify(sess[scoreSession(sess)]));
@@ -322,7 +322,10 @@ function sessionComplete(job, finish) {
 }
 connectJob('sessionComplete', sessionComplete);
 
+let imagesProcessing = 0;
+
 function processNewImage(imagePath, imageData) {
+  imagesProcessing++;
   if (!imageData) {
     imageData = {
       id: uuid.v4(),
@@ -359,6 +362,7 @@ function processNewImage(imagePath, imageData) {
     console.error('-----------');
     console.error(err);
     error = true;
+    imagesProcessing--;
   });
 
   write.on('close', function(){
@@ -520,6 +524,8 @@ function finishedImage(job, finish) {
   if (sessionImages[job.data.sessionId].complete) {
     sessionComplete({sessionId: job.data.sessionId});
   }
+
+    imagesProcessing--;
 
   finish(job.data);
 }
@@ -864,22 +870,30 @@ function sendBackPrepopulated() {
   }
 }
 
-// Socket.io
-io.on('connection', function(socket) {
-  socket.on('new_image', (data) => {
-    socket.broadcast.emit('new_image', data);
-  })
-
-  socket.on('endSession', (data) => {
+function endSessionFunc(data) {
+  if (imagesProcessing === 0) {
     console.log('END SESSION');
-
     if (sessionImages[sessionId]) {
       sessionImages[sessionId].complete = true;
     }
     callNextJobs('sessionEnd', {
       id: uuid.v4()
     });
-  });
+  } else {
+    console.log('IMAGES NOT PROCESSED, SESSION NOT ENDING')
+    setTimeout(() => {
+      endSessionFunc(data);
+    }, 1000);
+  }
+}
+
+// Socket.io
+io.on('connection', function(socket) {
+  socket.on('new_image', (data) => {
+    socket.broadcast.emit('new_image', data);
+  })
+
+  socket.on('endSession', endSessionFunc);
 
   // App asks for prepopulate images
   socket.on('getPrepopulate', () =>{
