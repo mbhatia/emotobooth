@@ -1,4 +1,4 @@
-/* global require */
+/* global window, require */
 
 'use strict';
 
@@ -95,6 +95,8 @@ export default class HaloStep {
       }
     }
     this.canvasUtils.createTopShapes(false, prg);
+
+    window.console.log('aura complete');
   }
 
   animateInHalo(duration = 1) {

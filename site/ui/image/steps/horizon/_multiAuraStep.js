@@ -1,4 +1,4 @@
-/* global require, single */
+/* global window, require, single */
 
 'use strict';
 
@@ -115,6 +115,8 @@ export default class MultiAuraStep {
     this.canvasUtils.createTopShapes(false, progress);
 
     this.imageElement.isDrawing = false;
+
+    window.console.log('aura complete');
   }
 
   animateInMultiAura(duration = 1) {
