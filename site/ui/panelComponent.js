@@ -1,4 +1,4 @@
-/* global window, require, states, single */
+/* global require, states, single */
 
 'use strict';
 
