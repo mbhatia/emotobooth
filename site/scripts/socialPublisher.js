@@ -72,13 +72,13 @@ module.exports = {
       console.log('Token stored to ' + this.TOKEN_PATH);
     }
     
-    fs.readFile('client_secret.json', (function(err, content) {
-      if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-      }
-      this.authorize(JSON.parse(content), (this.saveAuth).bind(this));
-    }).bind(this));
+    // fs.readFile('client_secret.json', (function(err, content) {
+    //   if (err) {
+    //     console.log('Error loading client secret file: ' + err);
+    //     return;
+    //   }
+    //   this.authorize(JSON.parse(content), (this.saveAuth).bind(this));
+    // }).bind(this));
 
     this.github = new GitHubApi({
       // required
