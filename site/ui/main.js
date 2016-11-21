@@ -122,26 +122,31 @@ newImage = function newImage(data, delay, index) {
     setRefreshTimeout();
     createThreeup(jsonData, true);
   } else if (!showGrid || index === 0) {
-    refreshTiming = refreshPostTiming;
-    setRefreshTimeout();
-    setTimeout(() => {
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          const imageExists = Number(xhr.getResponseHeader('Content-Length')) > 0;
-          if (imageExists) {
-            // create new panel
-            if (!showGrid) {
-              createPanel(jsonData);
-            } else {
-              createThreeup(jsonData);
+    if (window.location.pathname.includes('single')){
+      createPanel(jsonData);
+    } else {
+      refreshTiming = refreshPostTiming;
+      setRefreshTimeout();
+      setTimeout(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            window.console.log('found image');
+            const imageExists = Number(xhr.getResponseHeader('Content-Length')) > 0;
+            if (imageExists) {
+              // create new panel
+              if (!showGrid) {
+                createPanel(jsonData);
+              } else {
+                createThreeup(jsonData);
+              }
             }
           }
-        }
-      };
-      xhr.open('GET', jsonData.origPath, true);
-      xhr.send();
-    }, delay);
+        };
+        xhr.open('GET', jsonData.origPath, true);
+        xhr.send();
+      }, delay);
+    }
   }
 };
 

@@ -62,6 +62,25 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
+
+// This socket server is to provide a basic output for the image rendering
+// Only basic modules are loaded into phantomjs, so we need a basic
+// way of sending messages to tell the image renderer to stop.
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({ port: 8088 });
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(message) {
+    wss.clients.forEach(function each(client) {
+      if (client !== ws) client.send(message);
+    });
+  });
+});
+
+
+
+
+
 // If the folder doesn't exist, create it
 var checkDirs = [config.inDir, config.outDir, config.printDir, config.photostripDir];
 checkDirs.forEach((dir) => {
@@ -502,6 +521,7 @@ function getVisionData(job, finish) {
       fs.writeFile(path.join(config.outDir, job.data.id + '-resp.json'), JSON.stringify(body), (err) => {
         console.log('There was an error while recieving response data', err);
         job.data.respPath = path.join(config.outDir, job.data.id + '-resp.json');
+        job.data.response = body;
         finish(job.data);
       });
     });
@@ -652,7 +672,18 @@ function processFinalImages(sess) {
     if (argv.share) {
       socialPublisher.share(sess);
     } else {
-    saveSession(sess);
+      saveSession(sess);
+    }
+
+    // Remove image from the list of known files and move to completed folder
+    for (var key in sess) {
+      var tempFilePath = sess[key].path;
+      if (tempFilePath) {
+        var fileName = tempFilePath.split(config.inDir)[1];
+        var index = inFiles.indexOf(fileName)
+        inFiles.splice(index, 1);
+        fs.rename(tempFilePath, config.inDir + 'completed/' + fileName)
+      }
     }
     // sessionIsComplete = false;
   } else {
@@ -675,7 +706,7 @@ function processFinalImages(sess) {
       outJs,
       sess[incompleteSession].wasProcessed === 1 ? outChromeless: out,
       sess[incompleteSession].wasProcessed === 1 ? 'finalOnlyNoChrome' : 'finalOnly',
-      1000
+      5000
     ]
 
     console.log('running render on ', sess[incompleteSession].id);
@@ -708,61 +739,88 @@ function runPhantom(childArgs, incompleteSession) {
           //runPhantom(childArgs, incompleteSession);
         // }, 3000)
       }
-      if (stdout.indexOf('timeline complete') !== -1 && stdout.indexOf('aura complete') !== -1) {
-        if (incompleteSession) {
-          logger.info(sprintf('Saved finished image: %s', incompleteSession.finalPath));
-          incompleteSession.complete = true;
-          sessionImages[incompleteSession.sessionId][incompleteSession.id] = incompleteSession;
+      if (incompleteSession) {
+        logger.info(sprintf('Saved finished image: %s', incompleteSession.finalPath));
+        incompleteSession.complete = true;
+        sessionImages[incompleteSession.sessionId][incompleteSession.id] = incompleteSession;
 
-          console.log('Running session ', incompleteSession.sessionId);
-          processFinalImages(sessionImages[incompleteSession.sessionId]);
-        }
-
-      } else {
-        console.log('NO IMAGE SAVED!!');
-        childArgs[4] = childArgs[4] + 2000;
-        console.log(childArgs[4]);
-        runPhantom(childArgs, incompleteSession);
+        console.log('Running session ', incompleteSession.sessionId);
+        processFinalImages(sessionImages[incompleteSession.sessionId]);
       }
     }
   )
 }
 
 function testPhantom() {
-  var childArgs = [ '/vagrant/site/scripts/phantomChildProcess.js',
-  'out/1476731320805.js',
-  'out/' + (new Date()).getTime() + '-final-chromeless.jpg',
-  'finalOnlyNoChrome',
-  1000 ];
+  // var childArgs = [ '/vagrant/site/scripts/phantomChildProcess.js',
+  // 'out/1479498598505.js',
+  // 'out/1479498598505-final-chromeless.jpg',
+  // 'finalOnlyNoChrome',
+  // 20000 ]
 
-  runPhantom(childArgs, false);
+  // runPhantom(childArgs, false);
+
+  var childArgs = [ '/vagrant/site/scripts/phantomPhotostripProcess.js',
+  'out-photostrips/1479747280054/',
+  'out-print/1479747280054-photostrip-1.jpg',
+  [ '1479747261776.jpg' ] ]
+
+  runPhantomPhotoStrip(childArgs);
 }
 
-//setInterval(testPhantom, 1000);
+// setTimeout(testPhantom, 1000);
 
 //
 // File watcher/job queue interface
 //
 
-// Watch directory for new files and add to job queue
-chokidar.watch(config.inDir, {
-  ignoreInitial: true,
-  usePolling: true,
-  ignored: /CaptureOne/
-})
-.on('ready', function() {
-  //logger.info(sprintf('watching %s for new files', config.inDir));
-})
-.on('add', (imagePath) => {
-  setTimeout(() => {
-    var stat = fs.statSync(imagePath);
-    console.log('SIZE OF IMAGEPATH: ', stat.size);
+function fileDiff (a1, a2) {
+  var a = [], diff = [];
 
-    console.log(imagePath, stat);
+  for (var i = 0; i < a1.length; i++) {
+      a[a1[i]] = true;
+  }
 
-    newImage(imagePath);
-  }, 1000);
+  for (var i = 0; i < a2.length; i++) {
+      if (a[a2[i]]) {
+          delete a[a2[i]];
+      } else {
+          a[a2[i]] = true;
+      }
+  }
+
+  for (var k in a) {
+      diff.push(k);
+  }
+
+  return diff;
+};
+
+try {
+  fs.mkdirSync(config.inDir + '/completed');
+} catch (e) {
+
+}
+
+
+// Simple file watcher that looks for images added to the in directory
+var inFiles = [];
+fs.readdir(config.inDir, function(err, files) {
+  inFiles = files;
 });
+
+// Set an interval to look for the new images and run the functions we need to for new images
+setInterval(function() {
+  fs.readdir(config.inDir, function(err, files) {
+    if (files.length != inFiles.length) {
+      var newFiles = fileDiff(inFiles, files);
+      for (var key in newFiles) {
+        newImage(config.inDir + newFiles[key])
+      }
+    }
+    inFiles = files;
+  });
+}, 2000);
 
 // Stay alive
 process.on('uncaughtException', function(err) {
@@ -846,8 +904,8 @@ app.get('/delete-session/:id', (req, res) => {
 
 // Statically link the frontend build
 app.use(express.static('deploy'));
-app.use('in', express.static(__dirname + '/in'));
-app.use('out', express.static(__dirname + '/out'));
+//app.use('in', express.static(__dirname + '/in'));
+//app.use('out', express.static(__dirname + '/out'));
 app.use('', express.static(__dirname + '/build'));
 
 app.use(express.static('.'));

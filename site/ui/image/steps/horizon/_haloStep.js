@@ -96,7 +96,9 @@ export default class HaloStep {
     }
     this.canvasUtils.createTopShapes(false, prg);
 
-    window.console.log('aura complete');
+    if (window.ws) {
+      window.ws.send('renderComplete');
+    }
   }
 
   animateInHalo(duration = 1) {

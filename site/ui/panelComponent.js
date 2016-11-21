@@ -108,7 +108,6 @@ export default class PanelComponent {
     timeline.eventCallback('onStart', null);
     timeline.eventCallback('onUpdate', null);
     timeline.eventCallback('onComplete', null);
-    window.console.log('timeline complete')
     this.timelines.splice(this.timelines.indexOf(timeline), 1);
   }
 

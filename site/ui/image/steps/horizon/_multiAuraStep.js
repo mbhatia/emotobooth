@@ -116,7 +116,9 @@ export default class MultiAuraStep {
 
     this.imageElement.isDrawing = false;
 
-    window.console.log('aura complete');
+    if (window.ws) {
+      window.ws.send('renderComplete');
+    }
   }
 
   animateInMultiAura(duration = 1) {

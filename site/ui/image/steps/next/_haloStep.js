@@ -1,4 +1,4 @@
-/* global require */
+/* global window, require */
 
 'use strict';
 
@@ -84,6 +84,9 @@ export default class HaloStep {
 
         this.context.restore();
       }
+    }
+    if (window.ws) {
+      window.ws.send('renderComplete');
     }
   }
 

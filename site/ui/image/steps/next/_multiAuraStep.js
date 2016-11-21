@@ -1,4 +1,4 @@
-/* global require, single */
+/* global window, require, single */
 
 'use strict';
 
@@ -114,6 +114,10 @@ export default class MultiAuraStep {
     this.context.fill();
 
     this.imageElement.isDrawing = false;
+
+    if (window.ws) {
+      window.ws.send('renderComplete');
+    }
   }
 
   animateInMultiAura(duration = 1) {

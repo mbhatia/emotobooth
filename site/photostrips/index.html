@@ -1,5 +1,6 @@
 <html>
   <head>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
       function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
@@ -13,15 +14,27 @@
 
       // Blank / unescape
 
+      function sendRenderComplete(ws) {
+        ws.send('renderComplete');
+      }
+
       window.onload = function() {
+        var ws = new WebSocket('ws://127.0.0.1:8088');
         var inPath = '/'+unescape(getQueryVariable('inPath'));
         var images = unescape(getQueryVariable('images')).split(',');
         var imagePaths = [];
+        var imagesToLoad = images.width > 4 ? 4 : images.length;
 
         images.forEach(function (imagePath, index) {
           if (index < 4) {
             var path = inPath + imagePath;
             var img = document.getElementsByClassName('photo-'+index);
+            img[0].onload = function() {
+              imagesToLoad--;
+              if (imagesToLoad === 0) {
+                sendRenderComplete(ws);
+              }
+            }
 
             img[0].setAttribute('src', path);
             img[1].setAttribute('src', path);

@@ -1,4 +1,4 @@
-/* global require, single, document, window, Image, requestAnimationFrame */
+/* global window, require, single, document, window, Image, requestAnimationFrame */
 
 'use strict';
 

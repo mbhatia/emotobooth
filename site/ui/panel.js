@@ -13,6 +13,7 @@ import {
 
 export default class Panel {
   constructor(jsonData, eventName) {
+    this.jsonData = jsonData;
     this.imagePath = jsonData.origPath;
     this.reqPath = jsonData.reqPath;
     this.respPath = jsonData.respPath;
@@ -39,7 +40,11 @@ export default class Panel {
 
     this.jsonElement = new JsonElement(this.reqPath, this.respPath);
     this.sequenceTimeouts = [];
-    this.loadPanel();
+    if (window.single) {
+      this.loadPanel(this.jsonData);
+    } else {
+      this.loadPanel();
+    }
   }
 
   manifest(callback = null) {
@@ -123,8 +128,15 @@ export default class Panel {
       this.reqPath = jsonData.reqPath;
       this.respPath = jsonData.respPath;
       this.imagePath = jsonData.origPath;
+
+      if (jsonData.response) {
+        this.image.loadImage(jsonData.response, this.imagePath);
+      } else {
+        this.loadRespPath();
+      }
+    } else {
+      this.loadRespPath();
     }
-    this.loadRespPath();
   }
 
   injectContent(content) {
