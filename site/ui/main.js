@@ -127,6 +127,7 @@ newImage = function newImage(data, delay, index) {
     } else {
       refreshTiming = refreshPostTiming;
       setRefreshTimeout();
+      window.console.log('not single!');
       setTimeout(() => {
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = () => {

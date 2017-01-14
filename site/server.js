@@ -519,7 +519,10 @@ function getVisionData(job, finish) {
       json: jsonData
     }, (err, response, body) => {
       fs.writeFile(path.join(config.outDir, job.data.id + '-resp.json'), JSON.stringify(body), (err) => {
-        console.log('There was an error while recieving response data', err);
+        if (err) {
+          console.log('There was an error while recieving response data', err);
+          console.log(job.data);
+        }
         job.data.respPath = path.join(config.outDir, job.data.id + '-resp.json');
         job.data.response = body;
         finish(job.data);
@@ -947,8 +950,13 @@ function sendBackPrepopulated() {
   }
 }
 
-function endSessionFunc(data) {
-  if (imagesProcessing === 0) {
+function endSessionFunc(data, iterations) {
+  if (!iterations) {
+    iterations = 0;
+  }
+  iterations++;
+  console.log("IMAGES PROCESSING", imagesProcessing, iterations)
+  if (imagesProcessing === 0 || iterations === 15) {
     console.log('END SESSION');
     if (sessionImages[sessionId]) {
       sessionImages[sessionId].complete = true;
@@ -957,9 +965,10 @@ function endSessionFunc(data) {
       id: (new Date()).getTime()
     });
   } else {
-    console.log('IMAGES NOT PROCESSED, SESSION NOT ENDING')
+    console.log('IMAGES NOT PROCESSED, SESSION NOT ENDING');
+    console.log(data, iterations);
     setTimeout(() => {
-      endSessionFunc(data);
+      endSessionFunc(data, iterations);
     }, 1000);
   }
 }
@@ -967,7 +976,9 @@ function endSessionFunc(data) {
 // Socket.io
 io.on('connection', function(socket) {
   socket.on('new_image', (data) => {
-    socket.broadcast.emit('new_image', data);
+    setTimeout(function() {
+        socket.broadcast.emit('new_image', data);
+      }, 5000);
   })
 
   socket.on('endSession', endSessionFunc);

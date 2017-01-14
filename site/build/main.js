@@ -245,26 +245,32 @@
 	    setRefreshTimeout();
 	    createThreeup(jsonData, true);
 	  } else if (!showGrid || index === 0) {
-	    refreshTiming = refreshPostTiming;
-	    setRefreshTimeout();
-	    setTimeout(function () {
-	      var xhr = new XMLHttpRequest();
-	      xhr.onreadystatechange = function () {
-	        if (xhr.readyState === XMLHttpRequest.DONE) {
-	          var imageExists = Number(xhr.getResponseHeader('Content-Length')) > 0;
-	          if (imageExists) {
-	            // create new panel
-	            if (!showGrid) {
-	              createPanel(jsonData);
-	            } else {
-	              createThreeup(jsonData);
+	    if (window.location.pathname.includes('single')) {
+	      createPanel(jsonData);
+	    } else {
+	      refreshTiming = refreshPostTiming;
+	      setRefreshTimeout();
+	      window.console.log('not single!');
+	      setTimeout(function () {
+	        var xhr = new XMLHttpRequest();
+	        xhr.onreadystatechange = function () {
+	          if (xhr.readyState === XMLHttpRequest.DONE) {
+	            window.console.log('found image');
+	            var imageExists = Number(xhr.getResponseHeader('Content-Length')) > 0;
+	            if (imageExists) {
+	              // create new panel
+	              if (!showGrid) {
+	                createPanel(jsonData);
+	              } else {
+	                createThreeup(jsonData);
+	              }
 	            }
 	          }
-	        }
-	      };
-	      xhr.open('GET', jsonData.origPath, true);
-	      xhr.send();
-	    }, delay);
+	        };
+	        xhr.open('GET', jsonData.origPath, true);
+	        xhr.send();
+	      }, delay);
+	    }
 	  }
 	};
 	
@@ -451,7 +457,7 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global document, single, XMLHttpRequest */
+	/* global window, document, single, XMLHttpRequest */
 	
 	'use strict';
 	
@@ -483,6 +489,7 @@
 	  function Panel(jsonData, eventName) {
 	    _classCallCheck(this, Panel);
 	
+	    this.jsonData = jsonData;
 	    this.imagePath = jsonData.origPath;
 	    this.reqPath = jsonData.reqPath;
 	    this.respPath = jsonData.respPath;
@@ -501,6 +508,7 @@
 	    value: function init() {
 	      var _this = this;
 	
+	      window.console.log(this.jsonData);
 	      if (this.eventName === _imageConst.EVENT_NAME_NEXT) {
 	        this.image = new _imageElementNext2.default(this.imagePath, this.respPath, function () {
 	          _this.imageIsReady();
@@ -513,7 +521,11 @@
 	
 	      this.jsonElement = new _jsonElement2.default(this.reqPath, this.respPath);
 	      this.sequenceTimeouts = [];
-	      this.loadPanel();
+	      if (window.single) {
+	        this.loadPanel(this.jsonData);
+	      } else {
+	        this.loadPanel();
+	      }
 	    }
 	  }, {
 	    key: 'manifest',
@@ -615,8 +627,11 @@
 	        this.reqPath = jsonData.reqPath;
 	        this.respPath = jsonData.respPath;
 	        this.imagePath = jsonData.origPath;
+	
+	        this.loadRespPath();
+	      } else {
+	        this.loadRespPath();
 	      }
-	      this.loadRespPath();
 	    }
 	  }, {
 	    key: 'injectContent',
@@ -738,7 +753,7 @@
 	
 	    _classCallCheck(this, ImageElement);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageElement).call(this));
+	    var _this = _possibleConstructorReturn(this, (ImageElement.__proto__ || Object.getPrototypeOf(ImageElement)).call(this));
 	
 	    _this.canvasWidth = single ? imageConst.BACKEND_CANVAS_WIDTH : imageConst.CANVAS_WIDTH;
 	    _this.canvasHeight = single ? imageConst.BACKEND_CANVAS_HEIGHT : imageConst.CANVAS_HEIGHT;
@@ -832,7 +847,7 @@
 	        this.zoom(0, true);
 	        this.startAuraAnimations();
 	      } else {
-	        _get(Object.getPrototypeOf(ImageElement.prototype), 'startAnimations', this).call(this, function () {
+	        _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'startAnimations', this).call(this, function () {
 	          _this2.startAuraAnimations();
 	        });
 	      }
@@ -844,7 +859,7 @@
 	
 	      this.auraAnimations = new Timeline({
 	        onComplete: function onComplete() {
-	          _get(Object.getPrototypeOf(ImageElement.prototype), 'killTimeline', _this3).call(_this3, _this3.auraAnimations);
+	          _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'killTimeline', _this3).call(_this3, _this3.auraAnimations);
 	        }
 	      });
 	
@@ -869,7 +884,7 @@
 	    value: function reinitFaces(json) {
 	      var _this4 = this;
 	
-	      _get(Object.getPrototypeOf(ImageElement.prototype), 'reinitFaces', this).call(this, json, function () {
+	      _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'reinitFaces', this).call(this, json, function () {
 	        var stepsToKill = [_this4.flashStep, _this4.faceStep, _this4.zoomStep, _this4.emotionStep, _this4.backgroundStep, _this4.mutliAuraStep, _this4.vignetteStep, _this4.haloStep, _this4.chromeStep];
 	        stepsToKill.forEach(function (step) {
 	          if (step) {
@@ -1209,7 +1224,6 @@
 	      timeline.eventCallback('onStart', null);
 	      timeline.eventCallback('onUpdate', null);
 	      timeline.eventCallback('onComplete', null);
-	
 	      this.timelines.splice(this.timelines.indexOf(timeline), 1);
 	    }
 	  }, {
@@ -4210,7 +4224,7 @@
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global require, single, document, window, Image, requestAnimationFrame */
+	/* global window, require, single, document, window, Image, requestAnimationFrame */
 	
 	'use strict';
 	
@@ -5740,7 +5754,7 @@
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global require, single */
+	/* global window, require, single */
 	
 	'use strict';
 	
@@ -5885,6 +5899,10 @@
 	      this.context.fill();
 	
 	      this.imageElement.isDrawing = false;
+	
+	      if (window.ws) {
+	        window.ws.send('renderComplete');
+	      }
 	    }
 	  }, {
 	    key: 'animateInMultiAura',
@@ -6374,7 +6392,7 @@
 /* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global require */
+	/* global window, require */
 	
 	'use strict';
 	
@@ -6487,6 +6505,9 @@
 	
 	          this.context.restore();
 	        }
+	      }
+	      if (window.ws) {
+	        window.ws.send('renderComplete');
 	      }
 	    }
 	  }, {
@@ -6949,7 +6970,7 @@
 	
 	    _classCallCheck(this, ImageElement);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageElement).call(this));
+	    var _this = _possibleConstructorReturn(this, (ImageElement.__proto__ || Object.getPrototypeOf(ImageElement)).call(this));
 	
 	    _this.canvasWidth = single ? imageConst.BACKEND_CANVAS_WIDTH : imageConst.CANVAS_WIDTH;
 	    _this.canvasHeight = single ? imageConst.BACKEND_CANVAS_HEIGHT : imageConst.CANVAS_HEIGHT;
@@ -7056,7 +7077,7 @@
 	        this.zoom(0, true);
 	        this.startAuraAnimations();
 	      } else {
-	        _get(Object.getPrototypeOf(ImageElement.prototype), 'startAnimations', this).call(this, function () {
+	        _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'startAnimations', this).call(this, function () {
 	          _this2.startAuraAnimations();
 	        });
 	      }
@@ -7068,7 +7089,7 @@
 	
 	      this.auraAnimations = new Timeline({
 	        onComplete: function onComplete() {
-	          _get(Object.getPrototypeOf(ImageElement.prototype), 'killTimeline', _this3).call(_this3, _this3.auraAnimations);
+	          _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'killTimeline', _this3).call(_this3, _this3.auraAnimations);
 	        }
 	      });
 	
@@ -7093,7 +7114,7 @@
 	    value: function reinitFaces(json) {
 	      var _this4 = this;
 	
-	      _get(Object.getPrototypeOf(ImageElement.prototype), 'reinitFaces', this).call(this, json, function () {
+	      _get(ImageElement.prototype.__proto__ || Object.getPrototypeOf(ImageElement.prototype), 'reinitFaces', this).call(this, json, function () {
 	        if (_this4.particles) {
 	          _this4.particles.kill();
 	          _this4.particles = null;
@@ -7432,7 +7453,7 @@
 /* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global require */
+	/* global window, require */
 	
 	'use strict';
 	
@@ -7557,6 +7578,10 @@
 	        }
 	      }
 	      this.canvasUtils.createTopShapes(false, prg);
+	
+	      if (window.ws) {
+	        window.ws.send('renderComplete');
+	      }
 	    }
 	  }, {
 	    key: 'animateInHalo',
@@ -8170,7 +8195,7 @@
 /* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* global require, single */
+	/* global window, require, single */
 	
 	'use strict';
 	
@@ -8315,6 +8340,10 @@
 	      this.canvasUtils.createTopShapes(false, progress);
 	
 	      this.imageElement.isDrawing = false;
+	
+	      if (window.ws) {
+	        window.ws.send('renderComplete');
+	      }
 	    }
 	  }, {
 	    key: 'animateInMultiAura',
@@ -8521,7 +8550,7 @@
 	
 	    _classCallCheck(this, JsonElement);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(JsonElement).call(this));
+	    var _this = _possibleConstructorReturn(this, (JsonElement.__proto__ || Object.getPrototypeOf(JsonElement)).call(this));
 	
 	    _this.reqPath = reqPath;
 	    _this.respPath = respPath;
@@ -8575,7 +8604,7 @@
 	
 	      var tl = new TimelineMax({
 	        onComplete: function onComplete() {
-	          _get(Object.getPrototypeOf(JsonElement.prototype), 'killTimeline', _this2).call(_this2, tl);
+	          _get(JsonElement.prototype.__proto__ || Object.getPrototypeOf(JsonElement.prototype), 'killTimeline', _this2).call(_this2, tl);
 	        }
 	      });
 	      tl.to(this.scrim, animationUtils.POINTS_FADE_DURATION, { opacity: 1 });
@@ -8770,7 +8799,7 @@
 	      }
 	      var tl = new TimelineMax({
 	        onComplete: function onComplete() {
-	          _get(Object.getPrototypeOf(JsonElement.prototype), 'killTimeline', _this4).call(_this4, tl);
+	          _get(JsonElement.prototype.__proto__ || Object.getPrototypeOf(JsonElement.prototype), 'killTimeline', _this4).call(_this4, tl);
 	        }
 	      });
 	      tl.to(this.scrim, animationUtils.POINTS_FADE_DURATION, {

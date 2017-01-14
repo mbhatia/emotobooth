@@ -28,6 +28,7 @@ export default class Panel {
   }
 
   init() {
+    window.console.log(this.jsonData);
     if (this.eventName === EVENT_NAME_NEXT) {
       this.image = new nextImageElement(this.imagePath, this.respPath, () => {
          this.imageIsReady();
@@ -129,11 +130,7 @@ export default class Panel {
       this.respPath = jsonData.respPath;
       this.imagePath = jsonData.origPath;
 
-      if (jsonData.response) {
-        this.image.loadImage(jsonData.response, this.imagePath);
-      } else {
-        this.loadRespPath();
-      }
+      this.loadRespPath();
     } else {
       this.loadRespPath();
     }
