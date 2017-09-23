@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server -d --inline --content-base build --host 0.0.0.0"
+    "start": "webpack-dev-server -d --inline --content-base build --host 0.0.0.0",
+    "start-node": "node server.js"
   },
   "author": "Instrument",
   "repository": {
@@ -31,7 +32,7 @@
     "node-uuid": "1.4.7",
     "phantomjs-prebuilt": "2.1.5",
     "pixi.js": "3.0.11",
-    "redis": "2.4.2",
+    "redis": "2.8.0",
     "request": "2.69.0",
     "socket.io": "1.4.5",
     "socket.io-client": "1.4.5",

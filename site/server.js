@@ -29,8 +29,7 @@ var SocialPublisher = require('./scripts/socialPublisher');
 var express = require('express');
 var http = require('http');
 var socketIO = require('socket.io');
-var phantomjs = require('phantomjs-prebuilt')
-var phantomBinPath = phantomjs.path;
+var phantomBinPath = '/usr/bin/phantomjs';
 var dontPrint = false;
 
 logger.level = 'debug';
@@ -70,16 +69,22 @@ checkDirs.forEach((dir) => {
 //   files.forEach((file) => fs.unlink(config.inDir + file));
 // })
 
-// Create job queue
-var queue = kue.createQueue();
-
-// Redis
-var client = redisPromises.createClient();
+// Redis (connect to the docker container named redis)
+var client = redisPromises.createClient(6379, 'redis');
 client.hkeys("image-data", function (err, replies) {
   replies.forEach(function (reply, i) {
     // delete all historical images
     client.del('image-data', reply);
   });
+});
+
+// Create job queue
+var queue = kue.createQueue({
+  redis: {
+     createClientFactory: function(){
+        return redis.createClient(6379, 'redis')
+     }
+  }
 });
 
 if (CREDENTIALS) {
@@ -259,6 +264,7 @@ function scoreSession(sess) {
 //
 
 function sessionComplete(job, finish) {
+  console.log("Processing sessionComplete()");
   var currSessionId = job.sessionId || sessionId;
   sessionId++;
   var sess = sessionImages[currSessionId];
@@ -279,6 +285,7 @@ function sessionComplete(job, finish) {
         sess = scoreSession(sess);
         const topImages = topThreeImages(sess);
         if (topImages) {
+          console.log("Publishing 'new_image' to webpages!")
           socket.emit('new_image', JSON.stringify(topImages));
           processFinalImages(sess);
         }
@@ -491,12 +498,15 @@ function getVisionData(job, finish) {
 connectJob('getVisionData', getVisionData);
 
 function finishedImage(job, finish) {
+  console.log(client);
+  console.log(job);
   client.publish('new_image', JSON.stringify(job.data));
 
   job.data.complete = true;
   sessionImages[job.data.sessionId][job.data.id] = job.data;
   console.log('finished image ', job.data.id, job.data.sessionId, sessionIsComplete)
   if (sessionImages[job.data.sessionId].complete) {
+    console.log('session completed!');
     sessionComplete({sessionId: job.data.sessionId});
   }
 
@@ -871,7 +881,7 @@ io.on('connection', function(socket) {
 
   logger.debug('New socket connection');
   // Pass on redis pubsub events re: new images
-  var client = redis.createClient();
+  var client = redis.createClient(6379, 'redis', null);
   client.subscribe('new_image');
 
   client.on('message', (channel, message) => {
