@@ -4,6 +4,20 @@ Please refer to the main [README](README.md) for the various moving components o
 ## Pre-requisites
 * Docker
 * `docker-compose`
+
+## Update Config
+
+* Copy `site/config.js.example` to `site/config.js` and set the directory as follows:
+
+```
+config.inDir = 'data/in/';
+config.outDir = 'data/out/';
+config.printDir = 'data/out-print/';
+config.photostripDir = 'data/out-photostrips/';
+```
+
+Also, add your API key.
+
 ## Build
 
 ```bash
