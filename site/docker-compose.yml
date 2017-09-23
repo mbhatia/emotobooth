@@ -1,7 +1,7 @@
 redis:
   image: "redis:4-alpine"
 node:
-  image: "emotobooth:3"
+  image: "emotobooth:4"
   environment:
     - NODE_ENV=production
   ports:
@@ -9,3 +9,5 @@ node:
     - "9229:9229"
   links:
     - redis
+  volumes:
+    - ./data/in:/app/data/in

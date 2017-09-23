@@ -1,38 +1,30 @@
-FROM node:8-alpine
+FROM node:8-wheezy
 
 ## Install all the dependencies
-RUN apk add --no-cache \
-        build-base \
-        g++ \
-        git \
-        tmux \
-        vim \
-        htop \
-        imagemagick \
-        graphicsmagick \
-        cairo-dev \
-        libjpeg-turbo-dev \
-        jpeg-dev \
-        pango-dev \
-        giflib-dev \
-        pkgconf \
-        bash
-
-        ##toilet \
+RUN apt-get update; \
+	apt-get install -y --no-install-recommends \
+                build-essential \
+                git \
+                tmux \
+                toilet \
+                vim-nox \
+                htop \
+                imagemagick \
+                graphicsmagick \
+                fontconfig \
+                curl \
+        ; \
+	rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY package.json /app/
 RUN npm install
-    #npm uninstall phantomjs-prebuilt
-    #npm install phantomjs-prebuilt --no-bin-links
 
-## install phantomjs specific to Alpine
-RUN apk update && apk add --no-cache fontconfig curl && \
-    mkdir -p /usr/share && \
-    cd /usr/share && \
-    curl -L https://github.com/Overbryd/docker-phantomjs-alpine/releases/download/2.11/phantomjs-alpine-x86_64.tar.bz2 | tar xj && \
-    ln -s /usr/share/phantomjs/phantomjs /usr/bin/phantomjs && \
+## install phantomjs for linux 64-bit
+RUN mkdir /tmp/phantomjs && cd /tmp/phantomjs && \
+    curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 | tar xj && \
+    mv `find . -name phantomjs -type f` /usr/bin/phantomjs && \
     phantomjs --version
 
 RUN mkdir -p \
